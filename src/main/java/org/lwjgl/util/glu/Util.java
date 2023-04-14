@@ -34,11 +34,9 @@ package org.lwjgl.util.glu;
 import java.nio.IntBuffer;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL12;
 
-import static org.lwjgl.opengl.ARBImaging.GL_TABLE_TOO_LARGE;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL12.*;
-import static org.lwjgl.opengl.GL30.GL_INVALID_FRAMEBUFFER_OPERATION;
 
 /**
  * Util.java
@@ -125,10 +123,10 @@ public class Util {
             case GL_LUMINANCE_ALPHA:
                 return 2;
             case GL_RGB:
-            case GL_BGR:
+            case GL12.GL_BGR:
                 return 3;
             case GL_RGBA:
-            case GL_BGRA:
+            case GL12.GL_BGRA:
                 return 4;
             default :
                 return -1;
@@ -190,11 +188,11 @@ public class Util {
                 n = 2;
                 break;
             case GL_RGB:
-            case GL_BGR:
+            case GL12.GL_BGR:
                 n = 3;
                 break;
             case GL_RGBA:
-            case GL_BGRA:
+            case GL12.GL_BGRA:
                 n = 4;
                 break;
             default :
@@ -233,27 +231,6 @@ public class Util {
         return n * m;
     }
     public static String translateGLErrorString(int error_code) {
-        switch (error_code) {
-            case GL_NO_ERROR:
-                return "No error";
-            case GL_INVALID_ENUM:
-                return "Invalid enum";
-            case GL_INVALID_VALUE:
-                return "Invalid value";
-            case GL_INVALID_OPERATION:
-                return "Invalid operation";
-            case GL_STACK_OVERFLOW:
-                return "Stack overflow";
-            case GL_STACK_UNDERFLOW:
-                return "Stack underflow";
-            case GL_OUT_OF_MEMORY:
-                return "Out of memory";
-            case GL_TABLE_TOO_LARGE:
-                return "Table too large";
-            case GL_INVALID_FRAMEBUFFER_OPERATION:
-                return "Invalid framebuffer operation";
-            default:
-                return null;
-        }
+        return org.lwjgl.opengl.Util.translateGLErrorString(error_code);
     }
 }

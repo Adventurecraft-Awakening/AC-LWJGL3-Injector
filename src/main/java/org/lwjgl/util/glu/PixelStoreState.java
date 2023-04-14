@@ -29,60 +29,56 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.lwjgl.opengl;
+package org.lwjgl.util.glu;
 
 import static org.lwjgl.opengl.GL11.*;
 
 /**
- * Simple utility class.
+ * PixelStoreState.java
  *
- * @author cix_foo <cix_foo@users.sourceforge.net>
- * @version $Revision$
+ *
+ * Created 11-jan-2004
+ * @author Erik Duijs
  */
+class PixelStoreState extends Util {
 
-public final class Util {
-    /** No c'tor */
-    private Util() {
-    }
+	public int unpackRowLength;
+	public int unpackAlignment;
+	public int unpackSkipRows;
+	public int unpackSkipPixels;
+	public int packRowLength;
+	public int packAlignment;
+	public int packSkipRows;
+	public int packSkipPixels;
 
-    /**
-     * Throws OpenGLException if glGetError() returns anything else than GL_NO_ERROR
-     *
-     */
-    public static void checkGLError() throws OpenGLException {
-        if ( ContextCapabilities.DEBUG) // Do not call GetError inside a Begin/End pair.
-            return;
-        int err = glGetError();
-        if ( err != GL_NO_ERROR ) {
-            throw new OpenGLException(err);
-        }
-    }
+	/**
+	 * Constructor for PixelStoreState.
+	 */
+	PixelStoreState() {
+		super();
+		load();
+	}
 
-    /**
-     * Translate a GL error code to a String describing the error
-     */
-    public static String translateGLErrorString(int error_code) {
-        switch (error_code) {
-            case GL_NO_ERROR:
-                return "No error";
-            case GL_INVALID_ENUM:
-                return "Invalid enum";
-            case GL_INVALID_VALUE:
-                return "Invalid value";
-            case GL_INVALID_OPERATION:
-                return "Invalid operation";
-            case GL_STACK_OVERFLOW:
-                return "Stack overflow";
-            case GL_STACK_UNDERFLOW:
-                return "Stack underflow";
-            case GL_OUT_OF_MEMORY:
-                return "Out of memory";
-            case ARBImaging.GL_TABLE_TOO_LARGE:
-                return "Table too large";
-            case GL30.GL_INVALID_FRAMEBUFFER_OPERATION:
-                return "Invalid framebuffer operation";
-            default:
-                return null;
-        }
-    }
+	public void load() {
+		unpackRowLength = glGetInteger(GL_UNPACK_ROW_LENGTH);
+		unpackAlignment = glGetInteger(GL_UNPACK_ALIGNMENT);
+		unpackSkipRows = glGetInteger(GL_UNPACK_SKIP_ROWS);
+		unpackSkipPixels = glGetInteger(GL_UNPACK_SKIP_PIXELS);
+		packRowLength = glGetInteger(GL_PACK_ROW_LENGTH);
+		packAlignment = glGetInteger(GL_PACK_ALIGNMENT);
+		packSkipRows = glGetInteger(GL_PACK_SKIP_ROWS);
+		packSkipPixels = glGetInteger(GL_PACK_SKIP_PIXELS);
+	}
+
+	public void save() {
+		glPixelStorei(GL_UNPACK_ROW_LENGTH, unpackRowLength);
+		glPixelStorei(GL_UNPACK_ALIGNMENT, unpackAlignment);
+		glPixelStorei(GL_UNPACK_SKIP_ROWS, unpackSkipRows);
+		glPixelStorei(GL_UNPACK_SKIP_PIXELS, unpackSkipPixels);
+		glPixelStorei(GL_PACK_ROW_LENGTH, packRowLength);
+		glPixelStorei(GL_PACK_ALIGNMENT, packAlignment);
+		glPixelStorei(GL_PACK_SKIP_ROWS, packSkipRows);
+		glPixelStorei(GL_PACK_SKIP_PIXELS, packSkipPixels);
+	}
+
 }

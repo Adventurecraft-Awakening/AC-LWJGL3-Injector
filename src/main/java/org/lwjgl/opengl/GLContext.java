@@ -31,11 +31,9 @@
  */
 package org.lwjgl.opengl;
 
-import org.jetbrains.annotations.Nullable;
-import org.lwjgl.LWJGLException;
+import javax.annotation.Nullable;
 
-import java.util.Map;
-import java.util.WeakHashMap;
+import org.lwjgl.LWJGLException;
 
 /**
  * Created by gudenau on 5/31/2017.
