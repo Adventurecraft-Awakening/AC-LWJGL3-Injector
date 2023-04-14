@@ -271,6 +271,17 @@ public class ARBOcclusionQuery {
     }
 
     /**
+     * Redirect to {@link #glGetQueryObjectuivARB}.
+     */
+    @Deprecated
+    public static void glGetQueryObjectuARB(@NativeType("GLuint") int id, @NativeType("GLenum") int pname, @NativeType("GLuint *") IntBuffer params) {
+        if (CHECKS) {
+            check(params, 1);
+        }
+        nglGetQueryObjectuivARB(id, pname, memAddress(params));
+    }
+
+    /**
      * Unsigned version of {@link #glGetQueryObjectivARB GetQueryObjectivARB}.
      *
      * @param id     the name of a query object
