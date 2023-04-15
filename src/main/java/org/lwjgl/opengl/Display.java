@@ -6,6 +6,7 @@ import java.util.HashSet;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.LWJGLUtil;
+import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWImage;
@@ -58,8 +59,10 @@ public class Display {
 
     static {
         GLFWErrorCallback.createPrint(System.err).set();
-        if (GLFW.glfwInit()) {
-            throw new ExceptionInInitializerError("Unable to initialize GLFW");
+        if (!GLFW.glfwInit()) {
+            PointerBuffer desc = PointerBuffer.allocateDirect(1024);
+            GLFW.glfwGetError(desc);
+            throw new ExceptionInInitializerError("Unable to initialize GLFW: " + desc.getStringUTF8());
         }
 
         GLFWVidMode vidMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
@@ -261,7 +264,7 @@ public class Display {
         if (getPrivilegedBoolean("org.lwjgl.opengl.Display.noinput")) {
             return;
         }
-        
+
         if (!Mouse.isCreated() && !getPrivilegedBoolean("org.lwjgl.opengl.Display.nomouse")) {
             try {
                 Mouse.create();
