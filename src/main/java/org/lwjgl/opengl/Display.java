@@ -352,6 +352,10 @@ public class Display {
         return GLFW.glfwGetWindowAttrib(handle, GLFW.GLFW_ICONIFIED) == 0;
     }
 
+    public static boolean isMaximized() {
+        return GLFW.glfwGetWindowAttrib(handle, GLFW.GLFW_MAXIMIZED) != 0;
+    }
+
     public static void setResizable(boolean isResizable) {
         resizable = isResizable;
         if (isCreated()) {
@@ -392,6 +396,7 @@ public class Display {
             GLFW.glfwSwapInterval(swap_interval);
         }
     }
+
 
     private static int getWindowX() {
         if (!isFullscreen()) {
