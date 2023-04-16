@@ -1,19 +1,20 @@
 # legacy-lwjgl3
 
-A hacky over-engineered project that runs LWJGL3 for minecraft b1.7.3,
-allowing you to use modern LWJGL features and libraries on older minecraft versions.
+A hacky over-engineered project that runs LWJGL3 for Minecraft b1.7.3,
+allowing you to use modern LWJGL features and libraries on older Minecraft versions.
 
 ### Table of Contents
  * Usage
    * [Dev Environments](#dev-environments)
    * [Clients](#Clients)
  * [Performance Increases?](#performance-increases) 
-## Credits
-A whole lot of this code is just code from the original LWJGL 2 project modified to work with LWJGL 3, Thanks so much to
-the LWJGL devs for making their license so permissive.
 
-and a big thanks to gudenau for the original F*rge mod <https://github.com/gudenau/MC-LWJGL3> that did the same thing,
-thanks as a big portion of this code is from that project.
+## Credits
+A whole lot of this code is just code from the original LWJGL2 project modified to work with LWJGL3.
+
+Thanks to gudenau for the original <https://github.com/gudenau/MC-LWJGL3>, a big portion of this code is from that project.
+
+Further changes in fork are based on yet another fork: <https://github.com/Lassebq/legacy-lwjgl3>
 
 # Usage
 
