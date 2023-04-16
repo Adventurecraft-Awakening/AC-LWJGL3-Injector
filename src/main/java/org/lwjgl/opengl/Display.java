@@ -219,6 +219,8 @@ public class Display {
             return;
         }
 
+        window_created = true;
+
         // Configure GLFW
         GLFW.glfwSetWindowAttrib(handle, GLFW.GLFW_RESIZABLE, resizable ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
 
@@ -237,6 +239,7 @@ public class Display {
         width = current_mode.getWidth();
         height = current_mode.getHeight();
         GLFW.glfwSetWindowPos(handle, getWindowX(), getWindowY());
+
         // create general callbacks
         initControls();
 
@@ -247,12 +250,12 @@ public class Display {
             setIcon(new ByteBuffer[]{LWJGLUtil.LWJGLIcon32x32, LWJGLUtil.LWJGLIcon16x16});
         }
 
-        window_created = true;
-        window_needs_recreate = false;
         GLFW.glfwSwapInterval(swap_interval);
 
         GLFW.glfwShowWindow(handle);
         GLFW.glfwFocusWindow(handle);
+
+        window_needs_recreate = false;
     }
 
     static boolean getPrivilegedBoolean(final String property_name) {
