@@ -4,24 +4,24 @@ A hacky over-engineered project that runs LWJGL3 for Minecraft b1.7.3,
 allowing you to use modern LWJGL features and libraries on older Minecraft versions.
 
 ### Table of Contents
- * Usage
+ * [Usage](#usage)
    * [Dev Environments](#dev-environments)
-   * [Clients](#Clients)
  * [Performance Increases?](#performance-increases) 
+ * [Contributing](#contributing)
 
 ## Credits
 A whole lot of this code is just code from the original LWJGL2 project modified to work with LWJGL3.
 
 Thanks to gudenau for the original <https://github.com/gudenau/MC-LWJGL3>, a big portion of this code is from that project.
 
-Further changes in fork are based on yet another fork: <https://github.com/Lassebq/legacy-lwjgl3>
+Further changes are based on yet another fork: <https://github.com/Lassebq/legacy-lwjgl3>
 
 # Usage
 
 ## Dev Environments
 First head over to https://jitpack.io/#Adventurecraft-Awakening/AC-LWJGL3-Injector and select the latest version in commits
 
-then add this to your build.gradle replacing %VERSION% with the git commit version of your choosing
+then add this to your build.gradle replacing %VERSION% with the git commit version of your choosing:
 ```groovy
 ❯ build.gradle
 
@@ -79,8 +79,8 @@ configurations.all {
  this will create 2 new files in the folder `build/libs`, add the file ending with `-all-remapped.jar` to your list of mods and run the game
  
 # Performance Increases?
-While increasing performance was not the main point you do very much do see a benefit from LWJGl 3's quite substantial performance increase,
-resulting in a bump of about 20 fps (for me) even while having to emulate a lot of lwjgl 2 code that got removed.
+While increasing performance was not the main point you do very much do see a benefit from LWJGl3's quite substantial performance increase,
+resulting in a bump of about 20 fps (for me) even while having to emulate a lot of LWJGL2 code that got removed.
 
 ![results](.github/results.png) <br>
 The settings used
@@ -100,6 +100,6 @@ Options changed from default:
   - VSync: Disabled
 ```
 
-## Contributing
+# Contributing
 This project is a work in progress, if you have any suggestions or want to contribute feel free to open an issue or pull
-request<br>
+request.
