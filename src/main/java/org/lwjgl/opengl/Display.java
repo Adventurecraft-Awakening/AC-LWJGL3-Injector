@@ -220,6 +220,8 @@ public class Display {
         }
 
         window_created = true;
+        width = current_mode.getWidth();
+        height = current_mode.getHeight();
 
         // Configure GLFW
         GLFW.glfwSetWindowAttrib(handle, GLFW.GLFW_RESIZABLE, resizable ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
