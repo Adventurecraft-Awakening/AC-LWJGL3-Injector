@@ -1,7 +1,7 @@
 # legacy-lwjgl3
 
-A hacky over-engineered project that runs LWJGL3 on legacy-fabric minecraft versions (current only tested 1.8.9),
-Allowing you to use modern LWJGL features and libraries on older minecraft versions.
+A hacky over-engineered project that runs LWJGL3 on babric for minecraft b1.7.3,
+allowing you to use modern LWJGL features and libraries on older minecraft versions.
 
 ### Table of Contents
  * Usage
@@ -18,22 +18,28 @@ thanks as a big portion of this code is from that project.
 # Usage
 
 ## Dev Environments
-First head over to https://jitpack.io/#Zarzelcow/legacy-lwjgl3 and select the latest version in commits
+First head over to https://jitpack.io/#Adventurecraft-Awakening/AC-LWJGL3-Injector and select the latest version in commits
 
-then add this to your build.gradle replacing %VERSION% with the version of your choosing
+then add this to your build.gradle replacing %VERSION% with the git commit version of your choosing
 ```groovy
 ❯ build.gradle
 
 import org.gradle.internal.os.OperatingSystem
 
-project.ext.lwjglVersion = "3.3.1"
+project.ext.lwjglVersion = "3.3.2-SNAPSHOT"
 
 switch (OperatingSystem.current()) {
     case OperatingSystem.LINUX:
         project.ext.lwjglNatives = "natives-linux"
         break
+    case OperatingSystem.MAC_OS:
+        project.ext.lwjglNatives = "natives-macos"
+        break
     case OperatingSystem.WINDOWS:
-        project.ext.lwjglNatives = "natives-windows"
+        def osArch = System.getProperty("os.arch")
+        project.ext.lwjglNatives = osArch.contains("64")
+                ? "natives-windows${osArch.startsWith("aarch64") ? "-arm64" : ""}"
+                : "natives-windows-x86"
         break
 }
 
@@ -42,7 +48,7 @@ repositories {
 }
 
 dependencies {
-    modImplementation "com.github.Zarzelcow:legacy-lwjgl3:%VERSION%"
+    implementation "com.github.Adventurecraft-Awakening:AC-LWJGL3-Injector:%VERSION%"
     implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
     runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
@@ -96,5 +102,3 @@ Options changed from default:
 ## Contributing
 This project is a work in progress, if you have any suggestions or want to contribute feel free to open an issue or pull
 request<br>
-**Seriously please I suck at code quality and need people to help me**<br>***Really i w ill accept it im begging you my
-code quality is so bad 😭***![tiny potato](.github/tiny_potato.webp)
