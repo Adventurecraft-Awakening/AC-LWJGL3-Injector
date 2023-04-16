@@ -1,6 +1,6 @@
 # legacy-lwjgl3
 
-A hacky over-engineered project that runs LWJGL3 on babric for minecraft b1.7.3,
+A hacky over-engineered project that runs LWJGL3 for minecraft b1.7.3,
 allowing you to use modern LWJGL features and libraries on older minecraft versions.
 
 ### Table of Contents
