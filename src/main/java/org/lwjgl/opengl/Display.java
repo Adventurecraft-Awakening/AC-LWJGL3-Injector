@@ -145,10 +145,6 @@ public class Display {
         create(new PixelFormat());
     }
 
-    private static int valueOrDontCare(int value) {
-        return value == 0 ? GLFW.GLFW_DONT_CARE : value;
-    }
-
     public static void create(PixelFormat pixelFormat) throws LWJGLException {
         if (pixelFormat == null)
             throw new NullPointerException("pixelFormat must be not be null.");
@@ -157,17 +153,17 @@ public class Display {
 
         GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE);
 
-        GLFW.glfwWindowHint(GLFW.GLFW_ALPHA_BITS, valueOrDontCare(pixelFormat.getAlphaBits()));
-        GLFW.glfwWindowHint(GLFW.GLFW_ACCUM_ALPHA_BITS, valueOrDontCare(pixelFormat.getAccumulationAlpha()));
+        GLFW.glfwWindowHint(GLFW.GLFW_ALPHA_BITS, pixelFormat.getAlphaBits());
+        GLFW.glfwWindowHint(GLFW.GLFW_ACCUM_ALPHA_BITS, pixelFormat.getAccumulationAlpha());
 
-        GLFW.glfwWindowHint(GLFW.GLFW_DEPTH_BITS, valueOrDontCare(pixelFormat.getDepthBits()));
-        GLFW.glfwWindowHint(GLFW.GLFW_STENCIL_BITS, valueOrDontCare(pixelFormat.getStencilBits()));
+        GLFW.glfwWindowHint(GLFW.GLFW_DEPTH_BITS, pixelFormat.getDepthBits());
+        GLFW.glfwWindowHint(GLFW.GLFW_STENCIL_BITS, pixelFormat.getStencilBits());
 
-        GLFW.glfwWindowHint(GLFW.GLFW_SAMPLES, valueOrDontCare(pixelFormat.getSamples()));
-        GLFW.glfwWindowHint(GLFW.GLFW_SRGB_CAPABLE, valueOrDontCare(pixelFormat.isSRGB() ? 1 : 0));
-        GLFW.glfwWindowHint(GLFW.GLFW_STEREO, valueOrDontCare(pixelFormat.isStereo() ? 1 : 0));
+        GLFW.glfwWindowHint(GLFW.GLFW_SAMPLES, pixelFormat.getSamples());
+        GLFW.glfwWindowHint(GLFW.GLFW_SRGB_CAPABLE, pixelFormat.isSRGB() ? 1 : 0);
+        GLFW.glfwWindowHint(GLFW.GLFW_STEREO, pixelFormat.isStereo() ? 1 : 0);
 
-        GLFW.glfwWindowHint(GLFW.GLFW_REFRESH_RATE, valueOrDontCare(current_mode.getFrequency()));
+        GLFW.glfwWindowHint(GLFW.GLFW_REFRESH_RATE, current_mode.getFrequency());
 
         handle = GLFW.glfwCreateWindow(current_mode.getWidth(), current_mode.getHeight(), title, MemoryUtil.NULL, MemoryUtil.NULL);
         if (handle == MemoryUtil.NULL) {
