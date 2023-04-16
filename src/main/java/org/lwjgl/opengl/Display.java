@@ -236,8 +236,6 @@ public class Display {
             GLFW.glfwSetWindowMonitor(handle, MemoryUtil.NULL, x, y, current_mode.getWidth(), current_mode.getHeight(), current_mode.getFrequency());
         }
 
-        width = current_mode.getWidth();
-        height = current_mode.getHeight();
         GLFW.glfwSetWindowPos(handle, getWindowX(), getWindowY());
 
         // create general callbacks
