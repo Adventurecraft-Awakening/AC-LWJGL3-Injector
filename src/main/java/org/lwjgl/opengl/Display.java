@@ -118,6 +118,7 @@ public class Display {
         if (window_needs_recreate) {
             destroyWindow();
             createWindow();
+            window_needs_recreate = false;
         }
 
         window_resized = false;
@@ -220,7 +221,6 @@ public class Display {
 
         // Configure GLFW
         GLFW.glfwSetWindowAttrib(handle, GLFW.GLFW_RESIZABLE, resizable ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
-        window_created = true;
 
         if (isFullscreen()) {
             if (borderless_fullscreen) {
@@ -246,10 +246,13 @@ public class Display {
         } else {
             setIcon(new ByteBuffer[]{LWJGLUtil.LWJGLIcon32x32, LWJGLUtil.LWJGLIcon16x16});
         }
+
+        window_created = true;
+        window_needs_recreate = false;
+        GLFW.glfwSwapInterval(swap_interval);
+
         GLFW.glfwShowWindow(handle);
         GLFW.glfwFocusWindow(handle);
-
-        GLFW.glfwSwapInterval(swap_interval);
     }
 
     static boolean getPrivilegedBoolean(final String property_name) {
