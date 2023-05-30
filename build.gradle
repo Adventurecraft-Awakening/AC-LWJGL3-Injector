@@ -17,14 +17,14 @@ repositories {
     }
     maven {
         name 'LWJGL3'
-        url 'https://oss.sonatype.org/content/repositories/snapshots/'
+        url 'https://oss.sonatype.org/content/repositories/releases/'
     }
     mavenCentral()
 }
 
 import org.gradle.internal.os.OperatingSystem
 
-project.ext.lwjglVersion = "3.3.2-SNAPSHOT"
+project.ext.lwjglVersion = "3.3.2"
 switch (OperatingSystem.current()) {
     case OperatingSystem.LINUX:
         project.ext.lwjglNatives = "natives-linux"

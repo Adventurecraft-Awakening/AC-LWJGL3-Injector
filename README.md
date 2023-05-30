@@ -27,7 +27,7 @@ then add this to your build.gradle replacing %VERSION% with the git commit versi
 
 import org.gradle.internal.os.OperatingSystem
 
-project.ext.lwjglVersion = "3.3.2-SNAPSHOT"
+project.ext.lwjglVersion = "3.3.2"
 
 switch (OperatingSystem.current()) {
     case OperatingSystem.LINUX:
