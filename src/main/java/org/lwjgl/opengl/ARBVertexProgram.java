@@ -829,6 +829,13 @@ public class ARBVertexProgram {
         nglVertexAttribPointerARB(index, size, type, normalized, stride, memAddress(pointer));
     }
 
+    @Deprecated
+    public static void glVertexAttribPointerARB(
+        @NativeType("GLuint") int index, @NativeType("GLint") int size, boolean unsigned, @NativeType("GLboolean") boolean normalized, @NativeType("GLsizei") int stride, @NativeType("void const *") ShortBuffer pointer) {
+        int type = unsigned ? GL11.GL_UNSIGNED_SHORT : GL11.GL_SHORT;
+        nglVertexAttribPointerARB(index, size, type, normalized, stride, memAddress(pointer));
+    }
+
     // --- [ glEnableVertexAttribArrayARB ] ---
 
     /**
