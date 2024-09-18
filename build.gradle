@@ -1,7 +1,6 @@
 plugins {
     id "maven-publish"
     id "java"
-    id "java-library"
 }
 
 version = project.lib_version
@@ -35,11 +34,11 @@ repositories {
 dependencies {
     implementation "com.google.code.findbugs:jsr305:3.0.2"
 
-    api platform("org.lwjgl:lwjgl-bom:$project.lwjgl_version")
+    implementation platform("org.lwjgl:lwjgl-bom:$project.lwjgl_version")
 
     // Add LWJGL modules and native libs for current OS
     lwjglModules.each {
-        api "org.lwjgl:$it"
+        implementation "org.lwjgl:$it"
         runtimeOnly "org.lwjgl:$it::natives-$lwjglPlatform"
     }
 }
