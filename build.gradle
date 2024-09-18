@@ -1,58 +1,47 @@
 plugins {
-    id 'maven-publish'
-    id 'java'
+    id "maven-publish"
+    id "java"
+    id "java-library"
 }
 
-sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
-
-archivesBaseName = project.archives_base_name
-version = project.mod_version
+version = project.lib_version
 group = project.maven_group
+
+ext {
+    lwjglModules = [
+            "lwjgl",
+            "lwjgl-glfw",
+            "lwjgl-opengl",
+            "lwjgl-openal"
+    ]
+    lwjglPlatform = getCurrentPlatform()
+}
+
+base {
+    archivesName = project.archives_base_name
+}
 
 repositories {
     maven {
-        name "Jitpack"
-        url "https://jitpack.io"
+        name = "Jitpack"
+        url = "https://jitpack.io"
     }
     maven {
-        name 'LWJGL3'
-        url 'https://oss.sonatype.org/content/repositories/releases/'
+        name = "LWJGL3"
+        url = "https://oss.sonatype.org/content/repositories/releases/"
     }
-    mavenCentral()
-}
-
-import org.gradle.internal.os.OperatingSystem
-
-project.ext.lwjglVersion = "3.3.3"
-switch (OperatingSystem.current()) {
-    case OperatingSystem.LINUX:
-        project.ext.lwjglNatives = "natives-linux"
-        break
-    case OperatingSystem.MAC_OS:
-        project.ext.lwjglNatives = "natives-macos"
-        break
-    case OperatingSystem.WINDOWS:
-        def osArch = System.getProperty("os.arch")
-        project.ext.lwjglNatives = osArch.contains("64")
-                ? "natives-windows${osArch.startsWith("aarch64") ? "-arm64" : ""}"
-                : "natives-windows-x86"
-        break
 }
 
 dependencies {
-    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+    implementation "com.google.code.findbugs:jsr305:3.0.2"
 
-    implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
+    api platform("org.lwjgl:lwjgl-bom:$project.lwjgl_version")
 
-    implementation "org.lwjgl:lwjgl"
-    implementation "org.lwjgl:lwjgl-glfw"
-    implementation "org.lwjgl:lwjgl-openal"
-    implementation "org.lwjgl:lwjgl-opengl"
-
-    runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
+    // Add LWJGL modules and native libs for current OS
+    lwjglModules.each {
+        api "org.lwjgl:$it"
+        runtimeOnly "org.lwjgl:$it::natives-$lwjglPlatform"
+    }
 }
 
 // ensure that the encoding is set to UTF-8, no matter what the system default is
@@ -60,23 +49,20 @@ dependencies {
 // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
 tasks.withType(JavaCompile).configureEach {
     it.options.encoding = "UTF-8"
-    if (JavaVersion.current().isJava9Compatible()) it.options.release = 8
 }
 
-sourceSets {
-    main {
-        java {
-        }
-    }
+java {
+    sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 jar {
     from("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}" }
+        rename { "${it}_${project.base.archivesName.get()}" }
     }
 }
 
-// configure the maven publication
+// For information on how to set up publishing,
+// see https://docs.gradle.org/current/userguide/publishing_maven.html
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -84,9 +70,47 @@ publishing {
         }
     }
 
-    // select the repositories you want to publish to
     repositories {
-        // uncomment to publish to the local maven
-        mavenLocal()
+        // Add repositories to publish to here.
+        // Notice: This block does NOT have the same function as the block in the top level.
+        // The repositories here will be used for publishing your artifact,
+        // not for retrieving dependencies.
     }
+}
+
+import org.gradle.nativeplatform.internal.DefaultTargetMachineFactory
+
+/**
+ * Returns the current platform string ("os-arch"), blank arch implies x86_64.
+ * Suitable for retrieval of LWJGL natives.
+ */
+def getCurrentPlatform() {
+    def host = new DefaultTargetMachineFactory(project.objects).host()
+
+    def os = host.operatingSystemFamily
+    switch (os) {
+        case OperatingSystemFamily.WINDOWS:
+            break
+        case OperatingSystemFamily.LINUX:
+            break
+        case OperatingSystemFamily.MACOS:
+            break
+        default:
+            throw new GradleException("Unsupported OS: " + os)
+    }
+
+    def arch = host.architecture
+    switch (arch) {
+        case MachineArchitecture.X86:
+            if (os.isWindows())
+                return os.name + "-x86"
+            break
+
+        case MachineArchitecture.X86_64:
+            return os.name
+
+        case MachineArchitecture.ARM64:
+            return os.name + "-arm64"
+    }
+    throw new GradleException("Unsupported Architecture: " + arch)
 }
