@@ -13,7 +13,6 @@ ext {
             "lwjgl-opengl",
             "lwjgl-openal"
     ]
-    lwjglPlatform = getCurrentPlatform()
 }
 
 base {
@@ -22,24 +21,18 @@ base {
 
 repositories {
     maven {
-        name = "Jitpack"
-        url = "https://jitpack.io"
-    }
-    maven {
         name = "LWJGL3"
         url = "https://oss.sonatype.org/content/repositories/releases/"
     }
 }
 
 dependencies {
-    implementation "com.google.code.findbugs:jsr305:3.0.2"
+    compileOnly "com.google.code.findbugs:jsr305:3.0.2"
 
     implementation platform("org.lwjgl:lwjgl-bom:$project.lwjgl_version")
 
-    // Add LWJGL modules and native libs for current OS
     lwjglModules.each {
         implementation "org.lwjgl:$it"
-        runtimeOnly "org.lwjgl:$it::natives-$lwjglPlatform"
     }
 }
 
@@ -56,7 +49,7 @@ java {
 
 jar {
     from("LICENSE") {
-        rename { "${it}_${project.base.archivesName.get()}" }
+        rename { "${it}_${base.archivesName.get()}" }
     }
 }
 
@@ -75,41 +68,4 @@ publishing {
         // The repositories here will be used for publishing your artifact,
         // not for retrieving dependencies.
     }
-}
-
-import org.gradle.nativeplatform.internal.DefaultTargetMachineFactory
-
-/**
- * Returns the current platform string ("os-arch"), blank arch implies x86_64.
- * Suitable for retrieval of LWJGL natives.
- */
-def getCurrentPlatform() {
-    def host = new DefaultTargetMachineFactory(project.objects).host()
-
-    def os = host.operatingSystemFamily
-    switch (os) {
-        case OperatingSystemFamily.WINDOWS:
-            break
-        case OperatingSystemFamily.LINUX:
-            break
-        case OperatingSystemFamily.MACOS:
-            break
-        default:
-            throw new GradleException("Unsupported OS: " + os)
-    }
-
-    def arch = host.architecture
-    switch (arch) {
-        case MachineArchitecture.X86:
-            if (os.isWindows())
-                return os.name + "-x86"
-            break
-
-        case MachineArchitecture.X86_64:
-            return os.name
-
-        case MachineArchitecture.ARM64:
-            return os.name + "-arm64"
-    }
-    throw new GradleException("Unsupported Architecture: " + arch)
 }
