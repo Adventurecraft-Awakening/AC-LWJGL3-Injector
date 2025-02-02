@@ -386,22 +386,32 @@ public class Matrix4f extends Matrix implements Serializable {
         if (dest == null)
             dest = new Matrix4f();
 
-        float m00 = left.m00 * right.m00 + left.m10 * right.m01 + left.m20 * right.m02 + left.m30 * right.m03;
-        float m01 = left.m01 * right.m00 + left.m11 * right.m01 + left.m21 * right.m02 + left.m31 * right.m03;
-        float m02 = left.m02 * right.m00 + left.m12 * right.m01 + left.m22 * right.m02 + left.m32 * right.m03;
-        float m03 = left.m03 * right.m00 + left.m13 * right.m01 + left.m23 * right.m02 + left.m33 * right.m03;
-        float m10 = left.m00 * right.m10 + left.m10 * right.m11 + left.m20 * right.m12 + left.m30 * right.m13;
-        float m11 = left.m01 * right.m10 + left.m11 * right.m11 + left.m21 * right.m12 + left.m31 * right.m13;
-        float m12 = left.m02 * right.m10 + left.m12 * right.m11 + left.m22 * right.m12 + left.m32 * right.m13;
-        float m13 = left.m03 * right.m10 + left.m13 * right.m11 + left.m23 * right.m12 + left.m33 * right.m13;
-        float m20 = left.m00 * right.m20 + left.m10 * right.m21 + left.m20 * right.m22 + left.m30 * right.m23;
-        float m21 = left.m01 * right.m20 + left.m11 * right.m21 + left.m21 * right.m22 + left.m31 * right.m23;
-        float m22 = left.m02 * right.m20 + left.m12 * right.m21 + left.m22 * right.m22 + left.m32 * right.m23;
-        float m23 = left.m03 * right.m20 + left.m13 * right.m21 + left.m23 * right.m22 + left.m33 * right.m23;
-        float m30 = left.m00 * right.m30 + left.m10 * right.m31 + left.m20 * right.m32 + left.m30 * right.m33;
-        float m31 = left.m01 * right.m30 + left.m11 * right.m31 + left.m21 * right.m32 + left.m31 * right.m33;
-        float m32 = left.m02 * right.m30 + left.m12 * right.m31 + left.m22 * right.m32 + left.m32 * right.m33;
-        float m33 = left.m03 * right.m30 + left.m13 * right.m31 + left.m23 * right.m32 + left.m33 * right.m33;
+        float l00 = left.m00, l01 = left.m01, l02 = left.m02, l03 = left.m03;
+        float l10 = left.m10, l11 = left.m11, l12 = left.m12, l13 = left.m13;
+        float l20 = left.m20, l21 = left.m21, l22 = left.m22, l23 = left.m23;
+        float l30 = left.m30, l31 = left.m31, l32 = left.m32, l33 = left.m33;
+
+        float r00 = right.m00, r01 = right.m01, r02 = right.m02, r03 = right.m03;
+        float r10 = right.m10, r11 = right.m11, r12 = right.m12, r13 = right.m13;
+        float r20 = right.m20, r21 = right.m21, r22 = right.m22, r23 = right.m23;
+        float r30 = right.m30, r31 = right.m31, r32 = right.m32, r33 = right.m33;
+
+        float m00 = Math.fma(l00, r00, Math.fma(l10, r01, Math.fma(l20, r02, l30 * r03)));
+        float m01 = Math.fma(l01, r00, Math.fma(l11, r01, Math.fma(l21, r02, l31 * r03)));
+        float m02 = Math.fma(l02, r00, Math.fma(l12, r01, Math.fma(l22, r02, l32 * r03)));
+        float m03 = Math.fma(l03, r00, Math.fma(l13, r01, Math.fma(l23, r02, l33 * r03)));
+        float m10 = Math.fma(l00, r10, Math.fma(l10, r11, Math.fma(l20, r12, l30 * r13)));
+        float m11 = Math.fma(l01, r10, Math.fma(l11, r11, Math.fma(l21, r12, l31 * r13)));
+        float m12 = Math.fma(l02, r10, Math.fma(l12, r11, Math.fma(l22, r12, l32 * r13)));
+        float m13 = Math.fma(l03, r10, Math.fma(l13, r11, Math.fma(l23, r12, l33 * r13)));
+        float m20 = Math.fma(l00, r20, Math.fma(l10, r21, Math.fma(l20, r22, l30 * r23)));
+        float m21 = Math.fma(l01, r20, Math.fma(l11, r21, Math.fma(l21, r22, l31 * r23)));
+        float m22 = Math.fma(l02, r20, Math.fma(l12, r21, Math.fma(l22, r22, l32 * r23)));
+        float m23 = Math.fma(l03, r20, Math.fma(l13, r21, Math.fma(l23, r22, l33 * r23)));
+        float m30 = Math.fma(l00, r30, Math.fma(l10, r31, Math.fma(l20, r32, l30 * r33)));
+        float m31 = Math.fma(l01, r30, Math.fma(l11, r31, Math.fma(l21, r32, l31 * r33)));
+        float m32 = Math.fma(l02, r30, Math.fma(l12, r31, Math.fma(l22, r32, l32 * r33)));
+        float m33 = Math.fma(l03, r30, Math.fma(l13, r31, Math.fma(l23, r32, l33 * r33)));
 
         dest.m00 = m00;
         dest.m01 = m01;
@@ -439,10 +449,10 @@ public class Matrix4f extends Matrix implements Serializable {
     }
 
     public static Vector4f transform(Matrix4f left, float x, float y, float z, float w, Vector4f dest) {
-        float dx = left.m00 * x + left.m10 * y + left.m20 * z + left.m30 * w;
-        float dy = left.m01 * x + left.m11 * y + left.m21 * z + left.m31 * w;
-        float dz = left.m02 * x + left.m12 * y + left.m22 * z + left.m32 * w;
-        float dw = left.m03 * x + left.m13 * y + left.m23 * z + left.m33 * w;
+        float dx = Math.fma(left.m00, x, Math.fma(left.m10, y, Math.fma(left.m20, z, left.m30 * w)));
+        float dy = Math.fma(left.m01, x, Math.fma(left.m11, y, Math.fma(left.m21, z, left.m31 * w)));
+        float dz = Math.fma(left.m02, x, Math.fma(left.m12, y, Math.fma(left.m22, z, left.m32 * w)));
+        float dw = Math.fma(left.m03, x, Math.fma(left.m13, y, Math.fma(left.m23, z, left.m33 * w)));
 
         dest.x = dx;
         dest.y = dy;
@@ -458,9 +468,9 @@ public class Matrix4f extends Matrix implements Serializable {
     }
 
     public static Vector3f transform(Matrix4f left, float x, float y, float z, Vector3f dest) {
-        float dx = left.m00 * x + left.m10 * y + left.m20 * z + left.m30;
-        float dy = left.m01 * x + left.m11 * y + left.m21 * z + left.m31;
-        float dz = left.m02 * x + left.m12 * y + left.m22 * z + left.m32;
+        float dx = Math.fma(left.m00, x, Math.fma(left.m10, y, Math.fma(left.m20, z, left.m30)));
+        float dy = Math.fma(left.m01, x, Math.fma(left.m11, y, Math.fma(left.m21, z, left.m31)));
+        float dz = Math.fma(left.m02, x, Math.fma(left.m12, y, Math.fma(left.m22, z, left.m32)));
 
         dest.x = dx;
         dest.y = dy;
@@ -475,8 +485,8 @@ public class Matrix4f extends Matrix implements Serializable {
     }
 
     public static Vector2f transform(Matrix4f left, float x, float y, Vector2f dest) {
-        float dx = left.m00 * x + left.m10 * y + left.m30;
-        float dy = left.m01 * x + left.m11 * y + left.m31;
+        float dx = Math.fma(left.m00, x, Math.fma(left.m10, y, left.m30));
+        float dy = Math.fma(left.m01, x, Math.fma(left.m11, y, left.m31));
 
         dest.x = dx;
         dest.y = dy;
@@ -646,30 +656,34 @@ public class Matrix4f extends Matrix implements Serializable {
         float ys = y * s;
         float zs = z * s;
 
-        float f00 = x * x * oneminusc + c;
-        float f01 = xy * oneminusc + zs;
-        float f02 = xz * oneminusc - ys;
+        float f00 = x * Math.fma(x, oneminusc, c);
+        float f01 = Math.fma(xy, oneminusc, zs);
+        float f02 = Math.fma(xz, oneminusc, -ys);
         // n[3] not used
-        float f10 = xy * oneminusc - zs;
-        float f11 = y * y * oneminusc + c;
-        float f12 = yz * oneminusc + xs;
+        float f10 = Math.fma(xy, oneminusc, -zs);
+        float f11 = y * Math.fma(y, oneminusc, c);
+        float f12 = Math.fma(yz, oneminusc, xs);
         // n[7] not used
-        float f20 = xz * oneminusc + ys;
-        float f21 = yz * oneminusc - xs;
-        float f22 = z * z * oneminusc + c;
+        float f20 = Math.fma(xz, oneminusc, ys);
+        float f21 = Math.fma(yz, oneminusc, -xs);
+        float f22 = z * Math.fma(z, oneminusc, c);
 
-        float t00 = src.m00 * f00 + src.m10 * f01 + src.m20 * f02;
-        float t01 = src.m01 * f00 + src.m11 * f01 + src.m21 * f02;
-        float t02 = src.m02 * f00 + src.m12 * f01 + src.m22 * f02;
-        float t03 = src.m03 * f00 + src.m13 * f01 + src.m23 * f02;
-        float t10 = src.m00 * f10 + src.m10 * f11 + src.m20 * f12;
-        float t11 = src.m01 * f10 + src.m11 * f11 + src.m21 * f12;
-        float t12 = src.m02 * f10 + src.m12 * f11 + src.m22 * f12;
-        float t13 = src.m03 * f10 + src.m13 * f11 + src.m23 * f12;
-        dest.m20 = src.m00 * f20 + src.m10 * f21 + src.m20 * f22;
-        dest.m21 = src.m01 * f20 + src.m11 * f21 + src.m21 * f22;
-        dest.m22 = src.m02 * f20 + src.m12 * f21 + src.m22 * f22;
-        dest.m23 = src.m03 * f20 + src.m13 * f21 + src.m23 * f22;
+        float s00 = src.m00, s01 = src.m01, s02 = src.m02, s03 = src.m03;
+        float s10 = src.m10, s11 = src.m11, s12 = src.m12, s13 = src.m13;
+        float s20 = src.m20, s21 = src.m21, s22 = src.m22, s23 = src.m23;
+
+        float t00 = Math.fma(s00, f00, Math.fma(s10, f01, s20 * f02));
+        float t01 = Math.fma(s01, f00, Math.fma(s11, f01, s21 * f02));
+        float t02 = Math.fma(s02, f00, Math.fma(s12, f01, s22 * f02));
+        float t03 = Math.fma(s03, f00, Math.fma(s13, f01, s23 * f02));
+        float t10 = Math.fma(s00, f10, Math.fma(s10, f11, s20 * f12));
+        float t11 = Math.fma(s01, f10, Math.fma(s11, f11, s21 * f12));
+        float t12 = Math.fma(s02, f10, Math.fma(s12, f11, s22 * f12));
+        float t13 = Math.fma(s03, f10, Math.fma(s13, f11, s23 * f12));
+        dest.m20 = Math.fma(s00, f20, Math.fma(s10, f21, s20 * f22));
+        dest.m21 = Math.fma(s01, f20, Math.fma(s11, f21, s21 * f22));
+        dest.m22 = Math.fma(s02, f20, Math.fma(s12, f21, s22 * f22));
+        dest.m23 = Math.fma(s03, f20, Math.fma(s13, f21, s23 * f22));
         dest.m00 = t00;
         dest.m01 = t01;
         dest.m02 = t02;
@@ -685,14 +699,17 @@ public class Matrix4f extends Matrix implements Serializable {
         float c = (float) Math.cos(angle);
         float s = (float) Math.sin(angle);
 
-        float t10 = src.m10 * c + src.m20 * s;
-        float t11 = src.m11 * c + src.m21 * s;
-        float t12 = src.m12 * c + src.m22 * s;
-        float t13 = src.m13 * c + src.m23 * s;
-        dest.m20 = src.m10 * -s + src.m20 * c;
-        dest.m21 = src.m11 * -s + src.m21 * c;
-        dest.m22 = src.m12 * -s + src.m22 * c;
-        dest.m23 = src.m13 * -s + src.m23 * c;
+        float s10 = src.m10, s11 = src.m11, s12 = src.m12, s13 = src.m13;
+        float s20 = src.m20, s21 = src.m21, s22 = src.m22, s23 = src.m23;
+
+        float t10 = Math.fma(s10, c, s20 * s);
+        float t11 = Math.fma(s11, c, s21 * s);
+        float t12 = Math.fma(s12, c, s22 * s);
+        float t13 = Math.fma(s13, c, s23 * s);
+        dest.m20 = Math.fma(s10, -s, s20 * c);
+        dest.m21 = Math.fma(s11, -s, s21 * c);
+        dest.m22 = Math.fma(s12, -s, s22 * c);
+        dest.m23 = Math.fma(s13, -s, s23 * c);
         dest.m00 = src.m00;
         dest.m01 = src.m01;
         dest.m02 = src.m02;
@@ -712,14 +729,13 @@ public class Matrix4f extends Matrix implements Serializable {
         float c = (float) Math.cos(angle);
         float s = (float) Math.sin(angle);
 
-        float m00 = src.m00;
-        float m01 = src.m01;
-        float m02 = src.m02;
-        float m03 = src.m03;
-        float t00 = m00 * c + src.m20 * -s;
-        float t01 = m01 * c + src.m21 * -s;
-        float t02 = m02 * c + src.m22 * -s;
-        float t03 = m03 * c + src.m23 * -s;
+        float s00 = src.m00, s01 = src.m01, s02 = src.m02, s03 = src.m03;
+        float s20 = src.m20, s21 = src.m21, s22 = src.m22, s23 = src.m23;
+
+        float t00 = Math.fma(s00, c, s20 * -s);
+        float t01 = Math.fma(s01, c, s21 * -s);
+        float t02 = Math.fma(s02, c, s22 * -s);
+        float t03 = Math.fma(s03, c, s23 * -s);
         dest.m00 = t00;
         dest.m01 = t01;
         dest.m02 = t02;
@@ -728,10 +744,10 @@ public class Matrix4f extends Matrix implements Serializable {
         dest.m11 = src.m11;
         dest.m12 = src.m12;
         dest.m13 = src.m13;
-        dest.m20 = m00 * s + src.m20 * c;
-        dest.m21 = m01 * s + src.m21 * c;
-        dest.m22 = m02 * s + src.m22 * c;
-        dest.m23 = m03 * s + src.m23 * c;
+        dest.m20 = Math.fma(s00, s, s20 * c);
+        dest.m21 = Math.fma(s01, s, s21 * c);
+        dest.m22 = Math.fma(s02, s, s22 * c);
+        dest.m23 = Math.fma(s03, s, s23 * c);
         return dest;
     }
 
@@ -743,14 +759,17 @@ public class Matrix4f extends Matrix implements Serializable {
         float c = (float) Math.cos(angle);
         float s = (float) Math.sin(angle);
 
-        float t00 = src.m00 * c + src.m10 * s;
-        float t01 = src.m01 * c + src.m11 * s;
-        float t02 = src.m02 * c + src.m12 * s;
-        float t03 = src.m03 * c + src.m13 * s;
-        float t10 = src.m00 * -s + src.m10 * c;
-        float t11 = src.m01 * -s + src.m11 * c;
-        float t12 = src.m02 * -s + src.m12 * c;
-        float t13 = src.m03 * -s + src.m13 * c;
+        float s00 = src.m00, s01 = src.m01, s02 = src.m02, s03 = src.m03;
+        float s10 = src.m10, s11 = src.m11, s12 = src.m12, s13 = src.m13;
+
+        float t00 = Math.fma(s00, c, s10 * s);
+        float t01 = Math.fma(s01, c, s11 * s);
+        float t02 = Math.fma(s02, c, s12 * s);
+        float t03 = Math.fma(s03, c, s13 * s);
+        float t10 = Math.fma(s00, -s, s10 * c);
+        float t11 = Math.fma(s01, -s, s11 * c);
+        float t12 = Math.fma(s02, -s, s12 * c);
+        float t13 = Math.fma(s03, -s, s13 * c);
         dest.m00 = t00;
         dest.m01 = t01;
         dest.m02 = t02;
@@ -796,10 +815,10 @@ public class Matrix4f extends Matrix implements Serializable {
     }
 
     public static Matrix4f translate(float x, float y, float z, Matrix4f src, Matrix4f dest) {
-        dest.m30 += src.m00 * x + src.m10 * y + src.m20 * z;
-        dest.m31 += src.m01 * x + src.m11 * y + src.m21 * z;
-        dest.m32 += src.m02 * x + src.m12 * y + src.m22 * z;
-        dest.m33 += src.m03 * x + src.m13 * y + src.m23 * z;
+        dest.m30 = Math.fma(src.m00, x, Math.fma(src.m10, y, Math.fma(src.m20, z, dest.m30)));
+        dest.m31 = Math.fma(src.m01, x, Math.fma(src.m11, y, Math.fma(src.m21, z, dest.m31)));
+        dest.m32 = Math.fma(src.m02, x, Math.fma(src.m12, y, Math.fma(src.m22, z, dest.m32)));
+        dest.m33 = Math.fma(src.m03, x, Math.fma(src.m13, y, Math.fma(src.m23, z, dest.m33)));
         return dest;
     }
 
@@ -829,10 +848,10 @@ public class Matrix4f extends Matrix implements Serializable {
     }
 
     public static Matrix4f translate(float x, float y, Matrix4f src, Matrix4f dest) {
-        dest.m30 += src.m00 * x + src.m10 * y;
-        dest.m31 += src.m01 * x + src.m11 * y;
-        dest.m32 += src.m02 * x + src.m12 * y;
-        dest.m33 += src.m03 * x + src.m13 * y;
+        dest.m30 = Math.fma(src.m00, x, Math.fma(src.m10, y, dest.m30));
+        dest.m31 = Math.fma(src.m01, x, Math.fma(src.m11, y, dest.m31));
+        dest.m32 = Math.fma(src.m02, x, Math.fma(src.m12, y, dest.m32));
+        dest.m33 = Math.fma(src.m03, x, Math.fma(src.m13, y, dest.m33));
         return dest;
     }
 
@@ -897,23 +916,22 @@ public class Matrix4f extends Matrix implements Serializable {
      * @return the determinant of the matrix
      */
     public float determinant() {
-        float f = m00 * ((m11 * m22 * m33 + m12 * m23 * m31 + m13 * m21 * m32)
-                - m13 * m22 * m31
-                - m11 * m23 * m32
-                - m12 * m21 * m33);
-        f -= m01 * ((m10 * m22 * m33 + m12 * m23 * m30 + m13 * m20 * m32)
-                - m13 * m22 * m30
-                - m10 * m23 * m32
-                - m12 * m20 * m33);
-        f += m02 * ((m10 * m21 * m33 + m11 * m23 * m30 + m13 * m20 * m31)
-                - m13 * m21 * m30
-                - m10 * m23 * m31
-                - m11 * m20 * m33);
-        f -= m03 * ((m10 * m21 * m32 + m11 * m22 * m30 + m12 * m20 * m31)
-                - m12 * m21 * m30
-                - m10 * m22 * m31
-                - m11 * m20 * m32);
-        return f;
+        float a = this.m00, b = this.m01, c = this.m02, d = this.m03;
+        float e = this.m10, f = this.m11, g = this.m12, h = this.m13;
+        float i = this.m20, j = this.m21, k = this.m22, l = this.m23;
+        float m = this.m30, n = this.m31, o = this.m32, p = this.m33;
+
+        float kp_lo = Math.fma(k, p, -l * o);
+        float jp_ln = Math.fma(j, p, -l * n);
+        float jo_kn = Math.fma(j, o, -k * n);
+        float ip_lm = Math.fma(i, p, -l * m);
+        float io_km = Math.fma(i, o, -k * m);
+        float in_jm = Math.fma(i, n, -j * m);
+
+        return a * Math.fma(f, kp_lo, Math.fma(-g, jp_ln, h * jo_kn)) -
+                b * Math.fma(e, kp_lo, Math.fma(-g, ip_lm, h * io_km)) +
+                c * Math.fma(e, jp_ln, Math.fma(-f, ip_lm, h * in_jm)) -
+                d * Math.fma(e, jo_kn, Math.fma(-f, io_km, g * in_jm));
     }
 
     /**
@@ -925,9 +943,9 @@ public class Matrix4f extends Matrix implements Serializable {
             float t00, float t01, float t02,
             float t10, float t11, float t12,
             float t20, float t21, float t22) {
-        float m0 = t00 * (t11 * t22 - t12 * t21);
-        float m1 = t01 * (t12 * t20 - t10 * t22);
-        float m2 = t02 * (t10 * t21 - t11 * t20);
+        float m0 = t00 * Math.fma(t11, t22, -t12 * t21);
+        float m1 = t01 * Math.fma(t12, t20, -t10 * t22);
+        float m2 = t02 * Math.fma(t10, t21, -t11 * t20);
         return m0 + m1 + m2;
     }
 
@@ -953,36 +971,35 @@ public class Matrix4f extends Matrix implements Serializable {
             return null;
         }
 
-        /*
-         * m00 m01 m02 m03
-         * m10 m11 m12 m13
-         * m20 m21 m22 m23
-         * m30 m31 m32 m33
-         */
         if (dest == null)
             dest = new Matrix4f();
         float determinant_inv = 1f / determinant;
 
+        float s00 = src.m00, s01 = src.m01, s02 = src.m02, s03 = src.m03;
+        float s10 = src.m10, s11 = src.m11, s12 = src.m12, s13 = src.m13;
+        float s20 = src.m20, s21 = src.m21, s22 = src.m22, s23 = src.m23;
+        float s30 = src.m30, s31 = src.m31, s32 = src.m32, s33 = src.m33;
+
         // first row
-        float t00 = determinant3x3(src.m11, src.m12, src.m13, src.m21, src.m22, src.m23, src.m31, src.m32, src.m33);
-        float t01 = -determinant3x3(src.m10, src.m12, src.m13, src.m20, src.m22, src.m23, src.m30, src.m32, src.m33);
-        float t02 = determinant3x3(src.m10, src.m11, src.m13, src.m20, src.m21, src.m23, src.m30, src.m31, src.m33);
-        float t03 = -determinant3x3(src.m10, src.m11, src.m12, src.m20, src.m21, src.m22, src.m30, src.m31, src.m32);
+        float t00 = determinant3x3(s11, s12, s13, s21, s22, s23, s31, s32, s33);
+        float t01 = -determinant3x3(s10, s12, s13, s20, s22, s23, s30, s32, s33);
+        float t02 = determinant3x3(s10, s11, s13, s20, s21, s23, s30, s31, s33);
+        float t03 = -determinant3x3(s10, s11, s12, s20, s21, s22, s30, s31, s32);
         // second row
-        float t10 = -determinant3x3(src.m01, src.m02, src.m03, src.m21, src.m22, src.m23, src.m31, src.m32, src.m33);
-        float t11 = determinant3x3(src.m00, src.m02, src.m03, src.m20, src.m22, src.m23, src.m30, src.m32, src.m33);
-        float t12 = -determinant3x3(src.m00, src.m01, src.m03, src.m20, src.m21, src.m23, src.m30, src.m31, src.m33);
-        float t13 = determinant3x3(src.m00, src.m01, src.m02, src.m20, src.m21, src.m22, src.m30, src.m31, src.m32);
+        float t10 = -determinant3x3(s01, s02, s03, s21, s22, s23, s31, s32, s33);
+        float t11 = determinant3x3(s00, s02, s03, s20, s22, s23, s30, s32, s33);
+        float t12 = -determinant3x3(s00, s01, s03, s20, s21, s23, s30, s31, s33);
+        float t13 = determinant3x3(s00, s01, s02, s20, s21, s22, s30, s31, s32);
         // third row
-        float t20 = determinant3x3(src.m01, src.m02, src.m03, src.m11, src.m12, src.m13, src.m31, src.m32, src.m33);
-        float t21 = -determinant3x3(src.m00, src.m02, src.m03, src.m10, src.m12, src.m13, src.m30, src.m32, src.m33);
-        float t22 = determinant3x3(src.m00, src.m01, src.m03, src.m10, src.m11, src.m13, src.m30, src.m31, src.m33);
-        float t23 = -determinant3x3(src.m00, src.m01, src.m02, src.m10, src.m11, src.m12, src.m30, src.m31, src.m32);
+        float t20 = determinant3x3(s01, s02, s03, s11, s12, s13, s31, s32, s33);
+        float t21 = -determinant3x3(s00, s02, s03, s10, s12, s13, s30, s32, s33);
+        float t22 = determinant3x3(s00, s01, s03, s10, s11, s13, s30, s31, s33);
+        float t23 = -determinant3x3(s00, s01, s02, s10, s11, s12, s30, s31, s32);
         // fourth row
-        float t30 = -determinant3x3(src.m01, src.m02, src.m03, src.m11, src.m12, src.m13, src.m21, src.m22, src.m23);
-        float t31 = determinant3x3(src.m00, src.m02, src.m03, src.m10, src.m12, src.m13, src.m20, src.m22, src.m23);
-        float t32 = -determinant3x3(src.m00, src.m01, src.m03, src.m10, src.m11, src.m13, src.m20, src.m21, src.m23);
-        float t33 = determinant3x3(src.m00, src.m01, src.m02, src.m10, src.m11, src.m12, src.m20, src.m21, src.m22);
+        float t30 = -determinant3x3(s01, s02, s03, s11, s12, s13, s21, s22, s23);
+        float t31 = determinant3x3(s00, s02, s03, s10, s12, s13, s20, s22, s23);
+        float t32 = -determinant3x3(s00, s01, s03, s10, s11, s13, s20, s21, s23);
+        float t33 = determinant3x3(s00, s01, s02, s10, s11, s12, s20, s21, s22);
 
         // transpose and divide by the determinant
         dest.m00 = t00 * determinant_inv;
