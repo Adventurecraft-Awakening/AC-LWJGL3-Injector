@@ -435,17 +435,51 @@ public class Matrix4f extends Matrix implements Serializable {
     public static Vector4f transform(Matrix4f left, Vector4f right, Vector4f dest) {
         if (dest == null)
             dest = new Vector4f();
+        return transform(left, right.x, right.y, right.z, right.w, dest);
+    }
 
-        float x = left.m00 * right.x + left.m10 * right.y + left.m20 * right.z + left.m30 * right.w;
-        float y = left.m01 * right.x + left.m11 * right.y + left.m21 * right.z + left.m31 * right.w;
-        float z = left.m02 * right.x + left.m12 * right.y + left.m22 * right.z + left.m32 * right.w;
-        float w = left.m03 * right.x + left.m13 * right.y + left.m23 * right.z + left.m33 * right.w;
+    public static Vector4f transform(Matrix4f left, float x, float y, float z, float w, Vector4f dest) {
+        float dx = left.m00 * x + left.m10 * y + left.m20 * z + left.m30 * w;
+        float dy = left.m01 * x + left.m11 * y + left.m21 * z + left.m31 * w;
+        float dz = left.m02 * x + left.m12 * y + left.m22 * z + left.m32 * w;
+        float dw = left.m03 * x + left.m13 * y + left.m23 * z + left.m33 * w;
 
-        dest.x = x;
-        dest.y = y;
-        dest.z = z;
-        dest.w = w;
+        dest.x = dx;
+        dest.y = dy;
+        dest.z = dz;
+        dest.w = dw;
+        return dest;
+    }
 
+    public static Vector3f transform(Matrix4f left, Vector3f right, Vector3f dest) {
+        if (dest == null)
+            dest = new Vector3f();
+        return transform(left, right.x, right.y, right.z, dest);
+    }
+
+    public static Vector3f transform(Matrix4f left, float x, float y, float z, Vector3f dest) {
+        float dx = left.m00 * x + left.m10 * y + left.m20 * z + left.m30;
+        float dy = left.m01 * x + left.m11 * y + left.m21 * z + left.m31;
+        float dz = left.m02 * x + left.m12 * y + left.m22 * z + left.m32;
+
+        dest.x = dx;
+        dest.y = dy;
+        dest.z = dz;
+        return dest;
+    }
+
+    public static Vector2f transform(Matrix4f left, Vector2f right, Vector2f dest) {
+        if (dest == null)
+            dest = new Vector2f();
+        return transform(left, right.x, right.y, dest);
+    }
+
+    public static Vector2f transform(Matrix4f left, float x, float y, Vector2f dest) {
+        float dx = left.m00 * x + left.m10 * y + left.m30;
+        float dy = left.m01 * x + left.m11 * y + left.m31;
+
+        dest.x = dx;
+        dest.y = dy;
         return dest;
     }
 
@@ -503,19 +537,63 @@ public class Matrix4f extends Matrix implements Serializable {
     public static Matrix4f scale(Vector3f vec, Matrix4f src, Matrix4f dest) {
         if (dest == null)
             dest = new Matrix4f();
-        dest.m00 = src.m00 * vec.x;
-        dest.m01 = src.m01 * vec.x;
-        dest.m02 = src.m02 * vec.x;
-        dest.m03 = src.m03 * vec.x;
-        dest.m10 = src.m10 * vec.y;
-        dest.m11 = src.m11 * vec.y;
-        dest.m12 = src.m12 * vec.y;
-        dest.m13 = src.m13 * vec.y;
-        dest.m20 = src.m20 * vec.z;
-        dest.m21 = src.m21 * vec.z;
-        dest.m22 = src.m22 * vec.z;
-        dest.m23 = src.m23 * vec.z;
+        return scale(vec.x, vec.y, vec.z, src, dest);
+    }
+
+    public static Matrix4f scale(float x, float y, float z, Matrix4f src, Matrix4f dest) {
+        dest.m00 = src.m00 * x;
+        dest.m01 = src.m01 * x;
+        dest.m02 = src.m02 * x;
+        dest.m03 = src.m03 * x;
+        dest.m10 = src.m10 * y;
+        dest.m11 = src.m11 * y;
+        dest.m12 = src.m12 * y;
+        dest.m13 = src.m13 * y;
+        dest.m20 = src.m20 * z;
+        dest.m21 = src.m21 * z;
+        dest.m22 = src.m22 * z;
+        dest.m23 = src.m23 * z;
         return dest;
+    }
+
+    public Matrix4f scale(float x, float y, float z) {
+        return scale(x, y, z, this, this);
+    }
+
+    public static Matrix4f scaleX(float x, Matrix4f src, Matrix4f dest) {
+        dest.m00 = src.m00 * x;
+        dest.m01 = src.m01 * x;
+        dest.m02 = src.m02 * x;
+        dest.m03 = src.m03 * x;
+        return dest;
+    }
+
+    public Matrix4f scaleX(float x) {
+        return scaleX(x, this, this);
+    }
+
+    public static Matrix4f scaleY(float y, Matrix4f src, Matrix4f dest) {
+        dest.m10 = src.m10 * y;
+        dest.m11 = src.m11 * y;
+        dest.m12 = src.m12 * y;
+        dest.m13 = src.m13 * y;
+        return dest;
+    }
+
+    public Matrix4f scaleY(float y) {
+        return scaleY(y, this, this);
+    }
+
+    public static Matrix4f scaleZ(float z, Matrix4f src, Matrix4f dest) {
+        dest.m20 = src.m20 * z;
+        dest.m21 = src.m21 * z;
+        dest.m22 = src.m22 * z;
+        dest.m23 = src.m23 * z;
+        return dest;
+    }
+
+    public Matrix4f scaleZ(float z) {
+        return scaleZ(z, this, this);
     }
 
     /**
@@ -626,6 +704,10 @@ public class Matrix4f extends Matrix implements Serializable {
         return dest;
     }
 
+    public Matrix4f rotateX(float angle) {
+        return rotateX(angle, this, this);
+    }
+
     public static Matrix4f rotateY(float angle, Matrix4f src, Matrix4f dest) {
         float c = (float) Math.cos(angle);
         float s = (float) Math.sin(angle);
@@ -651,6 +733,10 @@ public class Matrix4f extends Matrix implements Serializable {
         dest.m22 = m02 * s + src.m22 * c;
         dest.m23 = m03 * s + src.m23 * c;
         return dest;
+    }
+
+    public Matrix4f rotateY(float angle) {
+        return rotateY(angle, this, this);
     }
 
     public static Matrix4f rotateZ(float angle, Matrix4f src, Matrix4f dest) {
@@ -680,6 +766,10 @@ public class Matrix4f extends Matrix implements Serializable {
         return dest;
     }
 
+    public Matrix4f rotateZ(float angle) {
+        return rotateZ(angle, this, this);
+    }
+
     /**
      * Translate this matrix and stash the result in another matrix
      *
@@ -700,13 +790,12 @@ public class Matrix4f extends Matrix implements Serializable {
      * @return The translated matrix
      */
     public static Matrix4f translate(Vector3f vec, Matrix4f src, Matrix4f dest) {
+        if (dest == null)
+            dest = new Matrix4f();
         return translate(vec.x, vec.y, vec.z, src, dest);
     }
 
     public static Matrix4f translate(float x, float y, float z, Matrix4f src, Matrix4f dest) {
-        if (dest == null)
-            dest = new Matrix4f();
-
         dest.m30 += src.m00 * x + src.m10 * y + src.m20 * z;
         dest.m31 += src.m01 * x + src.m11 * y + src.m21 * z;
         dest.m32 += src.m02 * x + src.m12 * y + src.m22 * z;
@@ -736,12 +825,14 @@ public class Matrix4f extends Matrix implements Serializable {
     public static Matrix4f translate(Vector2f vec, Matrix4f src, Matrix4f dest) {
         if (dest == null)
             dest = new Matrix4f();
+        return translate(vec.x, vec.y, src, dest);
+    }
 
-        dest.m30 += src.m00 * vec.x + src.m10 * vec.y;
-        dest.m31 += src.m01 * vec.x + src.m11 * vec.y;
-        dest.m32 += src.m02 * vec.x + src.m12 * vec.y;
-        dest.m33 += src.m03 * vec.x + src.m13 * vec.y;
-
+    public static Matrix4f translate(float x, float y, Matrix4f src, Matrix4f dest) {
+        dest.m30 += src.m00 * x + src.m10 * y;
+        dest.m31 += src.m01 * x + src.m11 * y;
+        dest.m32 += src.m02 * x + src.m12 * y;
+        dest.m33 += src.m03 * x + src.m13 * y;
         return dest;
     }
 

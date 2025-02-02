@@ -46,8 +46,6 @@ import java.nio.IntBuffer;
  * @author Erik Duijs
  */
 public class GLU {
-    static final float PI = (float)Math.PI;
-
     /* Errors: (return value 0 = no error) */
     public static final int GLU_INVALID_ENUM        = 100900;
     public static final int GLU_INVALID_VALUE       = 100901;
