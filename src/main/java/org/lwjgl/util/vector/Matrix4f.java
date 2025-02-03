@@ -34,6 +34,8 @@ package org.lwjgl.util.vector;
 import java.io.Serializable;
 import java.nio.FloatBuffer;
 
+import static org.lwjgl.util.FastMath.*;
+
 /**
  * Holds a 4x4 float matrix.
  *
@@ -401,22 +403,22 @@ public class Matrix4f extends Matrix implements Serializable {
         float r20 = right.m20, r21 = right.m21, r22 = right.m22, r23 = right.m23;
         float r30 = right.m30, r31 = right.m31, r32 = right.m32, r33 = right.m33;
 
-        float m00 = Math.fma(l00, r00, Math.fma(l10, r01, Math.fma(l20, r02, l30 * r03)));
-        float m01 = Math.fma(l01, r00, Math.fma(l11, r01, Math.fma(l21, r02, l31 * r03)));
-        float m02 = Math.fma(l02, r00, Math.fma(l12, r01, Math.fma(l22, r02, l32 * r03)));
-        float m03 = Math.fma(l03, r00, Math.fma(l13, r01, Math.fma(l23, r02, l33 * r03)));
-        float m10 = Math.fma(l00, r10, Math.fma(l10, r11, Math.fma(l20, r12, l30 * r13)));
-        float m11 = Math.fma(l01, r10, Math.fma(l11, r11, Math.fma(l21, r12, l31 * r13)));
-        float m12 = Math.fma(l02, r10, Math.fma(l12, r11, Math.fma(l22, r12, l32 * r13)));
-        float m13 = Math.fma(l03, r10, Math.fma(l13, r11, Math.fma(l23, r12, l33 * r13)));
-        float m20 = Math.fma(l00, r20, Math.fma(l10, r21, Math.fma(l20, r22, l30 * r23)));
-        float m21 = Math.fma(l01, r20, Math.fma(l11, r21, Math.fma(l21, r22, l31 * r23)));
-        float m22 = Math.fma(l02, r20, Math.fma(l12, r21, Math.fma(l22, r22, l32 * r23)));
-        float m23 = Math.fma(l03, r20, Math.fma(l13, r21, Math.fma(l23, r22, l33 * r23)));
-        float m30 = Math.fma(l00, r30, Math.fma(l10, r31, Math.fma(l20, r32, l30 * r33)));
-        float m31 = Math.fma(l01, r30, Math.fma(l11, r31, Math.fma(l21, r32, l31 * r33)));
-        float m32 = Math.fma(l02, r30, Math.fma(l12, r31, Math.fma(l22, r32, l32 * r33)));
-        float m33 = Math.fma(l03, r30, Math.fma(l13, r31, Math.fma(l23, r32, l33 * r33)));
+        float m00 = mulAdd(l00, r00, mulAdd(l10, r01, mulAdd(l20, r02, l30 * r03)));
+        float m01 = mulAdd(l01, r00, mulAdd(l11, r01, mulAdd(l21, r02, l31 * r03)));
+        float m02 = mulAdd(l02, r00, mulAdd(l12, r01, mulAdd(l22, r02, l32 * r03)));
+        float m03 = mulAdd(l03, r00, mulAdd(l13, r01, mulAdd(l23, r02, l33 * r03)));
+        float m10 = mulAdd(l00, r10, mulAdd(l10, r11, mulAdd(l20, r12, l30 * r13)));
+        float m11 = mulAdd(l01, r10, mulAdd(l11, r11, mulAdd(l21, r12, l31 * r13)));
+        float m12 = mulAdd(l02, r10, mulAdd(l12, r11, mulAdd(l22, r12, l32 * r13)));
+        float m13 = mulAdd(l03, r10, mulAdd(l13, r11, mulAdd(l23, r12, l33 * r13)));
+        float m20 = mulAdd(l00, r20, mulAdd(l10, r21, mulAdd(l20, r22, l30 * r23)));
+        float m21 = mulAdd(l01, r20, mulAdd(l11, r21, mulAdd(l21, r22, l31 * r23)));
+        float m22 = mulAdd(l02, r20, mulAdd(l12, r21, mulAdd(l22, r22, l32 * r23)));
+        float m23 = mulAdd(l03, r20, mulAdd(l13, r21, mulAdd(l23, r22, l33 * r23)));
+        float m30 = mulAdd(l00, r30, mulAdd(l10, r31, mulAdd(l20, r32, l30 * r33)));
+        float m31 = mulAdd(l01, r30, mulAdd(l11, r31, mulAdd(l21, r32, l31 * r33)));
+        float m32 = mulAdd(l02, r30, mulAdd(l12, r31, mulAdd(l22, r32, l32 * r33)));
+        float m33 = mulAdd(l03, r30, mulAdd(l13, r31, mulAdd(l23, r32, l33 * r33)));
 
         dest.m00 = m00;
         dest.m01 = m01;
@@ -454,10 +456,10 @@ public class Matrix4f extends Matrix implements Serializable {
     }
 
     public static Vector4f transform(Matrix4f left, float x, float y, float z, float w, Vector4f dest) {
-        float dx = Math.fma(left.m00, x, Math.fma(left.m10, y, Math.fma(left.m20, z, left.m30 * w)));
-        float dy = Math.fma(left.m01, x, Math.fma(left.m11, y, Math.fma(left.m21, z, left.m31 * w)));
-        float dz = Math.fma(left.m02, x, Math.fma(left.m12, y, Math.fma(left.m22, z, left.m32 * w)));
-        float dw = Math.fma(left.m03, x, Math.fma(left.m13, y, Math.fma(left.m23, z, left.m33 * w)));
+        float dx = mulAdd(left.m00, x, mulAdd(left.m10, y, mulAdd(left.m20, z, left.m30 * w)));
+        float dy = mulAdd(left.m01, x, mulAdd(left.m11, y, mulAdd(left.m21, z, left.m31 * w)));
+        float dz = mulAdd(left.m02, x, mulAdd(left.m12, y, mulAdd(left.m22, z, left.m32 * w)));
+        float dw = mulAdd(left.m03, x, mulAdd(left.m13, y, mulAdd(left.m23, z, left.m33 * w)));
 
         dest.x = dx;
         dest.y = dy;
@@ -473,9 +475,9 @@ public class Matrix4f extends Matrix implements Serializable {
     }
 
     public static Vector3f transform(Matrix4f left, float x, float y, float z, Vector3f dest) {
-        float dx = Math.fma(left.m00, x, Math.fma(left.m10, y, Math.fma(left.m20, z, left.m30)));
-        float dy = Math.fma(left.m01, x, Math.fma(left.m11, y, Math.fma(left.m21, z, left.m31)));
-        float dz = Math.fma(left.m02, x, Math.fma(left.m12, y, Math.fma(left.m22, z, left.m32)));
+        float dx = mulAdd(left.m00, x, mulAdd(left.m10, y, mulAdd(left.m20, z, left.m30)));
+        float dy = mulAdd(left.m01, x, mulAdd(left.m11, y, mulAdd(left.m21, z, left.m31)));
+        float dz = mulAdd(left.m02, x, mulAdd(left.m12, y, mulAdd(left.m22, z, left.m32)));
 
         dest.x = dx;
         dest.y = dy;
@@ -490,8 +492,8 @@ public class Matrix4f extends Matrix implements Serializable {
     }
 
     public static Vector2f transform(Matrix4f left, float x, float y, Vector2f dest) {
-        float dx = Math.fma(left.m00, x, Math.fma(left.m10, y, left.m30));
-        float dy = Math.fma(left.m01, x, Math.fma(left.m11, y, left.m31));
+        float dx = mulAdd(left.m00, x, mulAdd(left.m10, y, left.m30));
+        float dy = mulAdd(left.m01, x, mulAdd(left.m11, y, left.m31));
 
         dest.x = dx;
         dest.y = dy;
@@ -661,34 +663,34 @@ public class Matrix4f extends Matrix implements Serializable {
         float ys = y * s;
         float zs = z * s;
 
-        float f00 = x * Math.fma(x, oneminusc, c);
-        float f01 = Math.fma(xy, oneminusc, zs);
-        float f02 = Math.fma(xz, oneminusc, -ys);
+        float f00 = x * mulAdd(x, oneminusc, c);
+        float f01 = mulAdd(xy, oneminusc, zs);
+        float f02 = mulSub(xz, oneminusc, ys);
         // n[3] not used
-        float f10 = Math.fma(xy, oneminusc, -zs);
-        float f11 = y * Math.fma(y, oneminusc, c);
-        float f12 = Math.fma(yz, oneminusc, xs);
+        float f10 = mulSub(xy, oneminusc, zs);
+        float f11 = y * mulAdd(y, oneminusc, c);
+        float f12 = mulAdd(yz, oneminusc, xs);
         // n[7] not used
-        float f20 = Math.fma(xz, oneminusc, ys);
-        float f21 = Math.fma(yz, oneminusc, -xs);
-        float f22 = z * Math.fma(z, oneminusc, c);
+        float f20 = mulAdd(xz, oneminusc, ys);
+        float f21 = mulSub(yz, oneminusc, xs);
+        float f22 = z * mulAdd(z, oneminusc, c);
 
         float s00 = src.m00, s01 = src.m01, s02 = src.m02, s03 = src.m03;
         float s10 = src.m10, s11 = src.m11, s12 = src.m12, s13 = src.m13;
         float s20 = src.m20, s21 = src.m21, s22 = src.m22, s23 = src.m23;
 
-        float t00 = Math.fma(s00, f00, Math.fma(s10, f01, s20 * f02));
-        float t01 = Math.fma(s01, f00, Math.fma(s11, f01, s21 * f02));
-        float t02 = Math.fma(s02, f00, Math.fma(s12, f01, s22 * f02));
-        float t03 = Math.fma(s03, f00, Math.fma(s13, f01, s23 * f02));
-        float t10 = Math.fma(s00, f10, Math.fma(s10, f11, s20 * f12));
-        float t11 = Math.fma(s01, f10, Math.fma(s11, f11, s21 * f12));
-        float t12 = Math.fma(s02, f10, Math.fma(s12, f11, s22 * f12));
-        float t13 = Math.fma(s03, f10, Math.fma(s13, f11, s23 * f12));
-        dest.m20 = Math.fma(s00, f20, Math.fma(s10, f21, s20 * f22));
-        dest.m21 = Math.fma(s01, f20, Math.fma(s11, f21, s21 * f22));
-        dest.m22 = Math.fma(s02, f20, Math.fma(s12, f21, s22 * f22));
-        dest.m23 = Math.fma(s03, f20, Math.fma(s13, f21, s23 * f22));
+        float t00 = mulAdd(s00, f00, mulAdd(s10, f01, s20 * f02));
+        float t01 = mulAdd(s01, f00, mulAdd(s11, f01, s21 * f02));
+        float t02 = mulAdd(s02, f00, mulAdd(s12, f01, s22 * f02));
+        float t03 = mulAdd(s03, f00, mulAdd(s13, f01, s23 * f02));
+        float t10 = mulAdd(s00, f10, mulAdd(s10, f11, s20 * f12));
+        float t11 = mulAdd(s01, f10, mulAdd(s11, f11, s21 * f12));
+        float t12 = mulAdd(s02, f10, mulAdd(s12, f11, s22 * f12));
+        float t13 = mulAdd(s03, f10, mulAdd(s13, f11, s23 * f12));
+        dest.m20 = mulAdd(s00, f20, mulAdd(s10, f21, s20 * f22));
+        dest.m21 = mulAdd(s01, f20, mulAdd(s11, f21, s21 * f22));
+        dest.m22 = mulAdd(s02, f20, mulAdd(s12, f21, s22 * f22));
+        dest.m23 = mulAdd(s03, f20, mulAdd(s13, f21, s23 * f22));
         dest.m00 = t00;
         dest.m01 = t01;
         dest.m02 = t02;
@@ -707,14 +709,14 @@ public class Matrix4f extends Matrix implements Serializable {
         float s10 = src.m10, s11 = src.m11, s12 = src.m12, s13 = src.m13;
         float s20 = src.m20, s21 = src.m21, s22 = src.m22, s23 = src.m23;
 
-        float t10 = Math.fma(s10, c, s20 * s);
-        float t11 = Math.fma(s11, c, s21 * s);
-        float t12 = Math.fma(s12, c, s22 * s);
-        float t13 = Math.fma(s13, c, s23 * s);
-        dest.m20 = Math.fma(s10, -s, s20 * c);
-        dest.m21 = Math.fma(s11, -s, s21 * c);
-        dest.m22 = Math.fma(s12, -s, s22 * c);
-        dest.m23 = Math.fma(s13, -s, s23 * c);
+        float t10 = mulAdd(s10, c, s20 * s);
+        float t11 = mulAdd(s11, c, s21 * s);
+        float t12 = mulAdd(s12, c, s22 * s);
+        float t13 = mulAdd(s13, c, s23 * s);
+        dest.m20 = negMulAdd(s10, s, s20 * c);
+        dest.m21 = negMulAdd(s11, s, s21 * c);
+        dest.m22 = negMulAdd(s12, s, s22 * c);
+        dest.m23 = negMulAdd(s13, s, s23 * c);
         dest.m00 = src.m00;
         dest.m01 = src.m01;
         dest.m02 = src.m02;
@@ -737,10 +739,10 @@ public class Matrix4f extends Matrix implements Serializable {
         float s00 = src.m00, s01 = src.m01, s02 = src.m02, s03 = src.m03;
         float s20 = src.m20, s21 = src.m21, s22 = src.m22, s23 = src.m23;
 
-        float t00 = Math.fma(s00, c, s20 * -s);
-        float t01 = Math.fma(s01, c, s21 * -s);
-        float t02 = Math.fma(s02, c, s22 * -s);
-        float t03 = Math.fma(s03, c, s23 * -s);
+        float t00 = mulSub(s00, c, s20 * s);
+        float t01 = mulSub(s01, c, s21 * s);
+        float t02 = mulSub(s02, c, s22 * s);
+        float t03 = mulSub(s03, c, s23 * s);
         dest.m00 = t00;
         dest.m01 = t01;
         dest.m02 = t02;
@@ -749,10 +751,10 @@ public class Matrix4f extends Matrix implements Serializable {
         dest.m11 = src.m11;
         dest.m12 = src.m12;
         dest.m13 = src.m13;
-        dest.m20 = Math.fma(s00, s, s20 * c);
-        dest.m21 = Math.fma(s01, s, s21 * c);
-        dest.m22 = Math.fma(s02, s, s22 * c);
-        dest.m23 = Math.fma(s03, s, s23 * c);
+        dest.m20 = mulAdd(s00, s, s20 * c);
+        dest.m21 = mulAdd(s01, s, s21 * c);
+        dest.m22 = mulAdd(s02, s, s22 * c);
+        dest.m23 = mulAdd(s03, s, s23 * c);
         return dest;
     }
 
@@ -767,14 +769,14 @@ public class Matrix4f extends Matrix implements Serializable {
         float s00 = src.m00, s01 = src.m01, s02 = src.m02, s03 = src.m03;
         float s10 = src.m10, s11 = src.m11, s12 = src.m12, s13 = src.m13;
 
-        float t00 = Math.fma(s00, c, s10 * s);
-        float t01 = Math.fma(s01, c, s11 * s);
-        float t02 = Math.fma(s02, c, s12 * s);
-        float t03 = Math.fma(s03, c, s13 * s);
-        float t10 = Math.fma(s00, -s, s10 * c);
-        float t11 = Math.fma(s01, -s, s11 * c);
-        float t12 = Math.fma(s02, -s, s12 * c);
-        float t13 = Math.fma(s03, -s, s13 * c);
+        float t00 = mulAdd(s00, c, s10 * s);
+        float t01 = mulAdd(s01, c, s11 * s);
+        float t02 = mulAdd(s02, c, s12 * s);
+        float t03 = mulAdd(s03, c, s13 * s);
+        float t10 = negMulAdd(s00, s, s10 * c);
+        float t11 = negMulAdd(s01, s, s11 * c);
+        float t12 = negMulAdd(s02, s, s12 * c);
+        float t13 = negMulAdd(s03, s, s13 * c);
         dest.m00 = t00;
         dest.m01 = t01;
         dest.m02 = t02;
@@ -820,10 +822,10 @@ public class Matrix4f extends Matrix implements Serializable {
     }
 
     public static Matrix4f translate(float x, float y, float z, Matrix4f src, Matrix4f dest) {
-        dest.m30 = Math.fma(src.m00, x, Math.fma(src.m10, y, Math.fma(src.m20, z, dest.m30)));
-        dest.m31 = Math.fma(src.m01, x, Math.fma(src.m11, y, Math.fma(src.m21, z, dest.m31)));
-        dest.m32 = Math.fma(src.m02, x, Math.fma(src.m12, y, Math.fma(src.m22, z, dest.m32)));
-        dest.m33 = Math.fma(src.m03, x, Math.fma(src.m13, y, Math.fma(src.m23, z, dest.m33)));
+        dest.m30 = mulAdd(src.m00, x, mulAdd(src.m10, y, mulAdd(src.m20, z, dest.m30)));
+        dest.m31 = mulAdd(src.m01, x, mulAdd(src.m11, y, mulAdd(src.m21, z, dest.m31)));
+        dest.m32 = mulAdd(src.m02, x, mulAdd(src.m12, y, mulAdd(src.m22, z, dest.m32)));
+        dest.m33 = mulAdd(src.m03, x, mulAdd(src.m13, y, mulAdd(src.m23, z, dest.m33)));
         return dest;
     }
 
@@ -853,10 +855,10 @@ public class Matrix4f extends Matrix implements Serializable {
     }
 
     public static Matrix4f translate(float x, float y, Matrix4f src, Matrix4f dest) {
-        dest.m30 = Math.fma(src.m00, x, Math.fma(src.m10, y, dest.m30));
-        dest.m31 = Math.fma(src.m01, x, Math.fma(src.m11, y, dest.m31));
-        dest.m32 = Math.fma(src.m02, x, Math.fma(src.m12, y, dest.m32));
-        dest.m33 = Math.fma(src.m03, x, Math.fma(src.m13, y, dest.m33));
+        dest.m30 = mulAdd(src.m00, x, mulAdd(src.m10, y, dest.m30));
+        dest.m31 = mulAdd(src.m01, x, mulAdd(src.m11, y, dest.m31));
+        dest.m32 = mulAdd(src.m02, x, mulAdd(src.m12, y, dest.m32));
+        dest.m33 = mulAdd(src.m03, x, mulAdd(src.m13, y, dest.m33));
         return dest;
     }
 
@@ -926,17 +928,17 @@ public class Matrix4f extends Matrix implements Serializable {
         float i = this.m20, j = this.m21, k = this.m22, l = this.m23;
         float m = this.m30, n = this.m31, o = this.m32, p = this.m33;
 
-        float kp_lo = Math.fma(k, p, -l * o);
-        float jp_ln = Math.fma(j, p, -l * n);
-        float jo_kn = Math.fma(j, o, -k * n);
-        float ip_lm = Math.fma(i, p, -l * m);
-        float io_km = Math.fma(i, o, -k * m);
-        float in_jm = Math.fma(i, n, -j * m);
+        float kp_lo = mulSub(k, p, l * o);
+        float jp_ln = mulSub(j, p, l * n);
+        float jo_kn = mulSub(j, o, k * n);
+        float ip_lm = mulSub(i, p, l * m);
+        float io_km = mulSub(i, o, k * m);
+        float in_jm = mulSub(i, n, j * m);
 
-        return a * Math.fma(f, kp_lo, Math.fma(-g, jp_ln, h * jo_kn)) -
-                b * Math.fma(e, kp_lo, Math.fma(-g, ip_lm, h * io_km)) +
-                c * Math.fma(e, jp_ln, Math.fma(-f, ip_lm, h * in_jm)) -
-                d * Math.fma(e, jo_kn, Math.fma(-f, io_km, g * in_jm));
+        return a * mulAdd(f, kp_lo, negMulAdd(g, jp_ln, h * jo_kn)) -
+                b * mulAdd(e, kp_lo, negMulAdd(g, ip_lm, h * io_km)) +
+                c * mulAdd(e, jp_ln, negMulAdd(f, ip_lm, h * in_jm)) -
+                d * mulAdd(e, jo_kn, negMulAdd(f, io_km, g * in_jm));
     }
 
     /**
@@ -948,9 +950,9 @@ public class Matrix4f extends Matrix implements Serializable {
             float t00, float t01, float t02,
             float t10, float t11, float t12,
             float t20, float t21, float t22) {
-        float m0 = t00 * Math.fma(t11, t22, -t12 * t21);
-        float m1 = t01 * Math.fma(t12, t20, -t10 * t22);
-        float m2 = t02 * Math.fma(t10, t21, -t11 * t20);
+        float m0 = t00 * mulSub(t11, t22, t12 * t21);
+        float m1 = t01 * mulSub(t12, t20, t10 * t22);
+        float m2 = t02 * mulSub(t10, t21, t11 * t20);
         return m0 + m1 + m2;
     }
 
