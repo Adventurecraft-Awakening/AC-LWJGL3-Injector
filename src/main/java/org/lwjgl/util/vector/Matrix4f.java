@@ -52,7 +52,12 @@ public class Matrix4f extends Matrix implements Serializable {
         setIdentity();
     }
 
-    public Matrix4f(final Matrix4f src) {
+    public Matrix4f(Matrix4f src) {
+        super();
+        load(src);
+    }
+
+    public Matrix4f(FloatBuffer src) {
         super();
         load(src);
     }
@@ -188,7 +193,7 @@ public class Matrix4f extends Matrix implements Serializable {
      * @param buf A float buffer to read from
      * @return this
      */
-    public Matrix load(FloatBuffer buf) {
+    public Matrix4f load(FloatBuffer buf) {
 
         m00 = buf.get();
         m01 = buf.get();
