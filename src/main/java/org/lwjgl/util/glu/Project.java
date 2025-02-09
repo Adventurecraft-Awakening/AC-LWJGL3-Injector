@@ -48,23 +48,12 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class Project extends Util {
 
-    private static final float[] IDENTITY_MATRIX =
-            new float[] {
-                    1.0f, 0.0f, 0.0f, 0.0f,
-                    0.0f, 1.0f, 0.0f, 0.0f,
-                    0.0f, 0.0f, 1.0f, 0.0f,
-                    0.0f, 0.0f, 0.0f, 1.0f };
-
-    private static final FloatBuffer matrix = BufferUtils.createFloatBuffer(16);
-    private static final FloatBuffer finalMatrix = BufferUtils.createFloatBuffer(16);
-
-    private static final FloatBuffer tempMatrix = BufferUtils.createFloatBuffer(16);
-    private static final float[] in = new float[4];
-    private static final float[] out = new float[4];
-
-    private static final float[] forward = new float[3];
-    private static final float[] side = new float[3];
-    private static final float[] up = new float[3];
+    private static final float[] IDENTITY_MATRIX = new float[]{
+            1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f
+    };
 
     /**
      * Make matrix an identity matrix
@@ -84,85 +73,67 @@ public class Project extends Util {
      */
     private static void __gluMultMatrixVecf(FloatBuffer finalMatrix, float[] in, float[] out) {
         for (int i = 0; i < 4; i++) {
-            out[i] =
-                    in[0] * finalMatrix.get(finalMatrix.position() + i)
-                            + in[1] * finalMatrix.get(finalMatrix.position() + 4 + i)
-                            + in[2] * finalMatrix.get(finalMatrix.position() + 2*4 + i)
-                            + in[3] * finalMatrix.get(finalMatrix.position() + 3*4 + i);
-
+            out[i] = in[0] * finalMatrix.get(finalMatrix.position() + i)
+                    + in[1] * finalMatrix.get(finalMatrix.position() + 4 + i)
+                    + in[2] * finalMatrix.get(finalMatrix.position() + 2 * 4 + i)
+                    + in[3] * finalMatrix.get(finalMatrix.position() + 3 * 4 + i);
         }
     }
 
     /**
      * @param src
      * @param inverse
-     *
      * @return true if the matrix was succesfully inverted
      */
     private static boolean __gluInvertMatrixf(FloatBuffer src, FloatBuffer inverse) {
         int i, j, k, swap;
         float t;
-        FloatBuffer temp = Project.tempMatrix;
-
+        float[] temp = new float[16];
 
         for (i = 0; i < 16; i++) {
-            temp.put(i, src.get(i + src.position()));
+            temp[i] = src.get(i + src.position());
         }
         __gluMakeIdentityf(inverse);
 
         for (i = 0; i < 4; i++) {
-            /*
-             * * Look for largest element in column
-             */
+            // Look for largest element in column
             swap = i;
             for (j = i + 1; j < 4; j++) {
-                /*
-                 * if (fabs(temp[j][i]) > fabs(temp[i][i])) { swap = j;
-                 */
-                if (Math.abs(temp.get(j*4 + i)) > Math.abs(temp.get(i* 4 + i))) {
+                if (Math.abs(temp[j * 4 + i]) > Math.abs(temp[i * 4 + i])) {
                     swap = j;
                 }
             }
 
             if (swap != i) {
-                /*
-                 * * Swap rows.
-                 */
+                // Swap rows.
                 for (k = 0; k < 4; k++) {
-                    t = temp.get(i*4 + k);
-                    temp.put(i*4 + k, temp.get(swap*4 + k));
-                    temp.put(swap*4 + k, t);
+                    t = temp[i * 4 + k];
+                    temp[i * 4 + k] = temp[swap * 4 + k];
+                    temp[swap * 4 + k] = t;
 
-                    t = inverse.get(i*4 + k);
-                    inverse.put(i*4 + k, inverse.get(swap*4 + k));
-                    //inverse.put((i << 2) + k, inverse.get((swap << 2) + k));
-                    inverse.put(swap*4 + k, t);
-                    //inverse.put((swap << 2) + k, t);
+                    t = inverse.get(i * 4 + k);
+                    inverse.put(i * 4 + k, inverse.get(swap * 4 + k));
+                    inverse.put(swap * 4 + k, t);
                 }
             }
 
-            if (temp.get(i*4 + i) == 0) {
-                /*
-                 * * No non-zero pivot. The matrix is singular, which shouldn't *
-                 * happen. This means the user gave us a bad matrix.
-                 */
+            if (temp[i * 4 + i] == 0) {
+                // No non-zero pivot. The matrix is singular, which shouldn't
+                // happen. This means the user gave us a bad matrix.
                 return false;
             }
 
-            t = temp.get(i*4 + i);
+            t = temp[i * 4 + i];
             for (k = 0; k < 4; k++) {
-                temp.put(i*4 + k, temp.get(i*4 + k)/t);
-                inverse.put(i*4 + k, inverse.get(i*4 + k)/t);
+                temp[i * 4 + k] = temp[i * 4 + k] / t;
+                inverse.put(i * 4 + k, inverse.get(i * 4 + k) / t);
             }
             for (j = 0; j < 4; j++) {
                 if (j != i) {
-                    t = temp.get(j*4 + i);
+                    t = temp[j * 4 + i];
                     for (k = 0; k < 4; k++) {
-                        temp.put(j*4 + k, temp.get(j*4 + k) - temp.get(i*4 + k) * t);
-                        inverse.put(j*4 + k, inverse.get(j*4 + k) - inverse.get(i*4 + k) * t);
-						/*inverse.put(
-							(j << 2) + k,
-							inverse.get((j << 2) + k) - inverse.get((i << 2) + k) * t);*/
+                        temp[j * 4 + k] = temp[j * 4 + k] - temp[i * 4 + k] * t;
+                        inverse.put(j * 4 + k, inverse.get(j * 4 + k) - inverse.get(i * 4 + k) * t);
                     }
                 }
             }
@@ -177,9 +148,19 @@ public class Project extends Util {
      */
     private static void __gluMultMatricesf(FloatBuffer a, FloatBuffer b, FloatBuffer r) {
         for (int i = 0; i < 4; i++) {
+            float a0 = a.get(a.position() + i * 4 + 0);
+            float a1 = a.get(a.position() + i * 4 + 1);
+            float a2 = a.get(a.position() + i * 4 + 2);
+            float a3 = a.get(a.position() + i * 4 + 3);
+
             for (int j = 0; j < 4; j++) {
-                r.put(r.position() + i*4 + j,
-                        a.get(a.position() + i*4 + 0) * b.get(b.position() + 0*4 + j) + a.get(a.position() + i*4 + 1) * b.get(b.position() + 1*4 + j) + a.get(a.position() + i*4 + 2) * b.get(b.position() + 2*4 + j) + a.get(a.position() + i*4 + 3) * b.get(b.position() + 3*4 + j));
+                float b0 = b.get(b.position() + 0 * 4 + j);
+                float b1 = b.get(b.position() + 1 * 4 + j);
+                float b2 = b.get(b.position() + 2 * 4 + j);
+                float b3 = b.get(b.position() + 3 * 4 + j);
+
+                float v = a0 * b0 + a1 * b1 + a2 * b2 + a3 * b3;
+                r.put(r.position() + i * 4 + j, v);
             }
         }
     }
@@ -205,11 +186,12 @@ public class Project extends Util {
 
         cotangent = (float) Math.cos(radians) / sine;
 
+        var matrix = BufferUtils.createFloatBuffer(16);
         __gluMakeIdentityf(matrix);
 
         matrix.put(0 * 4 + 0, cotangent / aspect);
         matrix.put(1 * 4 + 1, cotangent);
-        matrix.put(2 * 4 + 2, - (zFar + zNear) / deltaZ);
+        matrix.put(2 * 4 + 2, -(zFar + zNear) / deltaZ);
         matrix.put(2 * 4 + 3, -1);
         matrix.put(3 * 4 + 2, -2 * zNear * zFar / deltaZ);
         matrix.put(3 * 4 + 3, 0);
@@ -240,9 +222,9 @@ public class Project extends Util {
             float upx,
             float upy,
             float upz) {
-        float[] forward = Project.forward;
-        float[] side = Project.side;
-        float[] up = Project.up;
+        float[] forward = new float[3];
+        float[] side = new float[3];
+        float[] up = new float[3];
 
         forward[0] = centerx - eyex;
         forward[1] = centery - eyey;
@@ -260,6 +242,8 @@ public class Project extends Util {
 
         /* Recompute up as: up = side x forward */
         cross(side, forward, up);
+
+        var matrix = BufferUtils.createFloatBuffer(16);
 
         __gluMakeIdentityf(matrix);
         matrix.put(0 * 4 + 0, side[0]);
@@ -298,8 +282,8 @@ public class Project extends Util {
             IntBuffer viewport,
             FloatBuffer win_pos) {
 
-        float[] in = Project.in;
-        float[] out = Project.out;
+        float[] in = new float[4];
+        float[] out = new float[4];
 
         in[0] = objx;
         in[1] = objy;
@@ -346,9 +330,10 @@ public class Project extends Util {
             FloatBuffer projMatrix,
             IntBuffer viewport,
             FloatBuffer obj_pos) {
-        float[] in = Project.in;
-        float[] out = Project.out;
+        float[] in = new float[4];
+        float[] out = new float[4];
 
+        var finalMatrix = BufferUtils.createFloatBuffer(16);
         __gluMultMatricesf(modelMatrix, projMatrix, finalMatrix);
 
         if (!__gluInvertMatrixf(finalMatrix, finalMatrix))
