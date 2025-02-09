@@ -1,5 +1,6 @@
 package com.github.zarzelcow.legacylwjgl3.implementation.glfw;
 
+import com.github.zarzelcow.legacylwjgl3.implementation.LwjglUtil;
 import org.lwjgl.glfw.*;
 import com.github.zarzelcow.legacylwjgl3.implementation.input.MouseImplementation;
 import org.lwjgl.input.Mouse;
@@ -14,10 +15,6 @@ import java.nio.IntBuffer;
  * @created 28/09/2022 - 8:58 PM
  */
 public class GLFWMouseImplementation implements MouseImplementation {
-    private GLFWMouseButtonCallback buttonCallback;
-    private GLFWCursorPosCallback posCallback;
-    private GLFWScrollCallback scrollCallback;
-    private GLFWCursorEnterCallback cursorEnterCallback;
     private long windowHandle;
     private boolean grabbed;
     private boolean isInsideWindow;
@@ -42,22 +39,22 @@ public class GLFWMouseImplementation implements MouseImplementation {
         if (GLFW.glfwRawMouseMotionSupported() && !Mouse.getPrivilegedBoolean("org.lwjgl.input.Mouse.disableRawInput"))
             GLFW.glfwSetInputMode(this.windowHandle, GLFW.GLFW_RAW_MOUSE_MOTION, GLFW.GLFW_TRUE);
 
-        this.buttonCallback = GLFWMouseButtonCallback.create((window, button, action, mods) -> {
-            byte state = action == GLFW.GLFW_PRESS ? (byte)1 : (byte)0;
+        var buttonCallback = GLFWMouseButtonCallback.create((window, button, action, mods) -> {
+            byte state = action == GLFW.GLFW_PRESS ? (byte) 1 : (byte) 0;
             putMouseEvent((byte) button, state, 0, System.nanoTime());
             if (button < button_states.length)
                 button_states[button] = state;
         });
-        this.posCallback = GLFWCursorPosCallback.create((window, xpos, ypos) -> {
+        var posCallback = GLFWCursorPosCallback.create((window, xpos, ypos) -> {
             int x = (int) xpos;
             int y = Display.getHeight() - 1 - (int) ypos; // I don't know why but this un-inverts the y motion of mouse inputs
             int dx = x - last_x;
             int dy = y - last_y;
             //TODO mouse input is faster in lwjgl2?
             //Needed to fix initial mouse delta
-            if(firstMove) {
-            	firstMove = false;
-            	dx = dy = 0;
+            if (firstMove) {
+                firstMove = false;
+                dx = dy = 0;
                 last_x = x;
                 last_y = y;
             }
@@ -68,22 +65,22 @@ public class GLFWMouseImplementation implements MouseImplementation {
                 last_y = y;
                 long nanos = System.nanoTime();
                 if (grabbed) {
-                    putMouseEventWithCoords((byte)-1, (byte)0, dx, dy, 0, nanos);
+                    putMouseEventWithCoords((byte) -1, (byte) 0, dx, dy, 0, nanos);
                 } else {
-                    putMouseEventWithCoords((byte)-1, (byte)0, x, y, 0, nanos);
+                    putMouseEventWithCoords((byte) -1, (byte) 0, x, y, 0, nanos);
                 }
             }
         });
-        this.scrollCallback = GLFWScrollCallback.create((window, xoffset, yoffset) -> {
+        var scrollCallback = GLFWScrollCallback.create((window, xoffset, yoffset) -> {
             accum_dz += yoffset;
-            putMouseEvent((byte)-1, (byte)0, (int) yoffset, System.nanoTime());
+            putMouseEvent((byte) -1, (byte) 0, (int) yoffset, System.nanoTime());
         });
-        this.cursorEnterCallback = GLFWCursorEnterCallback.create((window, entered) -> this.isInsideWindow = entered);
+        var cursorEnterCallback = GLFWCursorEnterCallback.create((window, entered) -> this.isInsideWindow = entered);
 
-        GLFW.glfwSetMouseButtonCallback(this.windowHandle, this.buttonCallback);
-        GLFW.glfwSetCursorPosCallback(this.windowHandle, this.posCallback);
-        GLFW.glfwSetScrollCallback(this.windowHandle, this.scrollCallback);
-        GLFW.glfwSetCursorEnterCallback(this.windowHandle, this.cursorEnterCallback);
+        LwjglUtil.tryFree(GLFW.glfwSetMouseButtonCallback(this.windowHandle, buttonCallback));
+        LwjglUtil.tryFree(GLFW.glfwSetCursorPosCallback(this.windowHandle, posCallback));
+        LwjglUtil.tryFree(GLFW.glfwSetScrollCallback(this.windowHandle, scrollCallback));
+        LwjglUtil.tryFree(GLFW.glfwSetCursorEnterCallback(this.windowHandle, cursorEnterCallback));
     }
 
     private void putMouseEvent(byte button, byte state, int dz, long nanos) {
@@ -103,16 +100,17 @@ public class GLFWMouseImplementation implements MouseImplementation {
 
     @Override
     public void destroyMouse() {
-        this.buttonCallback.free();
-        this.posCallback.free();
-        this.scrollCallback.free();
-        this.cursorEnterCallback.free();
+        LwjglUtil.tryFree(GLFW.glfwSetMouseButtonCallback(this.windowHandle, null));
+        LwjglUtil.tryFree(GLFW.glfwSetCursorPosCallback(this.windowHandle, null));
+        LwjglUtil.tryFree(GLFW.glfwSetScrollCallback(this.windowHandle, null));
+        LwjglUtil.tryFree(GLFW.glfwSetCursorEnterCallback(this.windowHandle, null));
     }
 
     private void reset() {
         this.event_queue.clearEvents();
         accum_dx = accum_dy = 0;
     }
+
     @Override
     public void pollMouse(IntBuffer coord_buffer, ByteBuffer buttons_buffer) {
         if (grabbed) {
@@ -166,8 +164,8 @@ public class GLFWMouseImplementation implements MouseImplementation {
         return this.isInsideWindow;
     }
 
-	@Override
-	public int getNativeCursorCapabilities() {
-		return 0;
-	}
+    @Override
+    public int getNativeCursorCapabilities() {
+        return 0;
+    }
 }

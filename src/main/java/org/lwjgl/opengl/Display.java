@@ -3,16 +3,13 @@ package org.lwjgl.opengl;
 import java.nio.ByteBuffer;
 import java.util.HashSet;
 
+import com.github.zarzelcow.legacylwjgl3.implementation.LwjglUtil;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.LWJGLUtil;
 import org.lwjgl.PointerBuffer;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWImage;
-import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.glfw.*;
 import org.lwjgl.glfw.GLFWVidMode.Buffer;
-import org.lwjgl.glfw.GLFWWindowSizeCallback;
 //import org.lwjgl.input.Controllers;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -49,8 +46,6 @@ public class Display {
     private static boolean window_created = false;
 
     private static boolean window_needs_recreate = false;
-
-    private static GLFWWindowSizeCallback sizeCallback = null;
 
     private static ByteBuffer[] cached_icons = null;
 
@@ -171,8 +166,9 @@ public class Display {
             throw new LWJGLException("Display could not be created.");
         }
 
-        sizeCallback = GLFWWindowSizeCallback.create(Display::resizeCallback);
-        GLFW.glfwSetWindowSizeCallback(handle, sizeCallback);
+        var sizeCallback = GLFWWindowSizeCallback.create(Display::resizeCallback);
+        LwjglUtil.tryFree(GLFW.glfwSetWindowSizeCallback(handle, sizeCallback));
+
         GLFW.glfwMakeContextCurrent(handle);
         createWindow();
         GL.createCapabilities();
@@ -329,15 +325,8 @@ public class Display {
         // Terminate GLFW and free the error callback
         GLFW.glfwTerminate();
 
-        if (sizeCallback != null) {
-            sizeCallback.free();
-            sizeCallback = null;
-        }
-
-        GLFWErrorCallback callback2 = GLFW.glfwSetErrorCallback(null);
-        if (callback2 != null) {
-            callback2.free();
-        }
+        LwjglUtil.tryFree(GLFW.glfwSetWindowSizeCallback(handle, null));
+        LwjglUtil.tryFree(GLFW.glfwSetErrorCallback(null));
     }
 
     public static boolean isCreated() {

@@ -1,5 +1,6 @@
 package com.github.zarzelcow.legacylwjgl3.implementation.glfw;
 
+import com.github.zarzelcow.legacylwjgl3.implementation.LwjglUtil;
 import org.lwjgl.glfw.*;
 import com.github.zarzelcow.legacylwjgl3.implementation.input.KeyboardImplementation;
 import org.lwjgl.input.Keyboard;
@@ -13,8 +14,6 @@ import java.nio.ByteBuffer;
  * @created 28/09/2022 - 2:14 PM
  */
 public class GLFWKeyboardImplementation implements KeyboardImplementation {
-    private GLFWKeyCallback keyCallback;
-    private GLFWCharCallback charCallback;
     private long windowHandle;
 
     private final byte[] key_down_buffer = new byte[Keyboard.KEYBOARD_SIZE];
@@ -24,7 +23,7 @@ public class GLFWKeyboardImplementation implements KeyboardImplementation {
 
     @Override
     public void createKeyboard() {
-        this.keyCallback = GLFWKeyCallback.create((window, glfwKey, scancode, action, mods) -> {
+        var keyCallback = GLFWKeyCallback.create((window, glfwKey, scancode, action, mods) -> {
             int key = translateKeyFromGLFW(glfwKey);
             if (action == GLFW.GLFW_PRESS) {
                 this.key_down_buffer[key] = 1;
@@ -34,15 +33,15 @@ public class GLFWKeyboardImplementation implements KeyboardImplementation {
             putKeyboardEvent(key, this.key_down_buffer[key], 0, System.nanoTime(), action == GLFW.GLFW_REPEAT);
         });
 
-        this.charCallback = GLFWCharCallback.create((window, codepoint) ->
+        var charCallback = GLFWCharCallback.create((window, codepoint) ->
             // if the keycode is 0 minecraft instead uses the character code as the key pressed, not sure why
             // but a keycode of -1 is used instead to fix this issue
             putKeyboardEvent(-1, (byte) 1, codepoint, System.nanoTime(), false)
         );
 
         this.windowHandle = Display.getHandle();
-        GLFW.glfwSetKeyCallback(this.windowHandle, this.keyCallback);
-        GLFW.glfwSetCharCallback(this.windowHandle, this.charCallback);
+        LwjglUtil.tryFree(GLFW.glfwSetKeyCallback(this.windowHandle, keyCallback));
+        LwjglUtil.tryFree(GLFW.glfwSetCharCallback(this.windowHandle, charCallback));
     }
 
     private void putKeyboardEvent(int keycode, byte state, int ch, long nanos, boolean repeat) {
@@ -54,8 +53,8 @@ public class GLFWKeyboardImplementation implements KeyboardImplementation {
 
     @Override
     public void destroyKeyboard() {
-        this.keyCallback.free();
-        this.charCallback.free();
+        LwjglUtil.tryFree(GLFW.glfwSetKeyCallback(this.windowHandle, null));
+        LwjglUtil.tryFree(GLFW.glfwSetCharCallback(this.windowHandle, null));
     }
 
     @Override
