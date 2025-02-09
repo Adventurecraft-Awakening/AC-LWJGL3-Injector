@@ -663,17 +663,17 @@ public class Matrix4f extends Matrix implements Serializable {
         float ys = y * s;
         float zs = z * s;
 
-        float f00 = x * mulAdd(x, oneminusc, c);
+        float f00 = mulAdd(x * x, oneminusc, c);
         float f01 = mulAdd(xy, oneminusc, zs);
         float f02 = mulSub(xz, oneminusc, ys);
         // n[3] not used
         float f10 = mulSub(xy, oneminusc, zs);
-        float f11 = y * mulAdd(y, oneminusc, c);
+        float f11 = mulAdd(y * y, oneminusc, c);
         float f12 = mulAdd(yz, oneminusc, xs);
         // n[7] not used
         float f20 = mulAdd(xz, oneminusc, ys);
         float f21 = mulSub(yz, oneminusc, xs);
-        float f22 = z * mulAdd(z, oneminusc, c);
+        float f22 = mulAdd(z * z, oneminusc, c);
 
         float s00 = src.m00, s01 = src.m01, s02 = src.m02, s03 = src.m03;
         float s10 = src.m10, s11 = src.m11, s12 = src.m12, s13 = src.m13;
@@ -936,9 +936,9 @@ public class Matrix4f extends Matrix implements Serializable {
         float in_jm = mulSub(i, n, j * m);
 
         return a * mulAdd(f, kp_lo, negMulAdd(g, jp_ln, h * jo_kn)) -
-                b * mulAdd(e, kp_lo, negMulAdd(g, ip_lm, h * io_km)) +
-                c * mulAdd(e, jp_ln, negMulAdd(f, ip_lm, h * in_jm)) -
-                d * mulAdd(e, jo_kn, negMulAdd(f, io_km, g * in_jm));
+            b * mulAdd(e, kp_lo, negMulAdd(g, ip_lm, h * io_km)) +
+            c * mulAdd(e, jp_ln, negMulAdd(f, ip_lm, h * in_jm)) -
+            d * mulAdd(e, jo_kn, negMulAdd(f, io_km, g * in_jm));
     }
 
     /**
@@ -947,9 +947,9 @@ public class Matrix4f extends Matrix implements Serializable {
      * @return result
      */
     private static float determinant3x3(
-            float t00, float t01, float t02,
-            float t10, float t11, float t12,
-            float t20, float t21, float t22) {
+        float t00, float t01, float t02,
+        float t10, float t11, float t12,
+        float t20, float t21, float t22) {
         float m0 = t00 * mulSub(t11, t22, t12 * t21);
         float m1 = t01 * mulSub(t12, t20, t10 * t22);
         float m2 = t02 * mulSub(t10, t21, t11 * t20);
