@@ -289,15 +289,15 @@ public class Display {
             return new DisplayMode[0];
         }
         Buffer videoModes = GLFW.glfwGetVideoModes(primaryMonitor);
-        HashSet<DisplayMode> modes = new HashSet<>(videoModes.sizeof());
-        for (int i = 0; i < videoModes.sizeof(); i++) {
+        if (videoModes == null) {
+            return new DisplayMode[0];
+        }
+        HashSet<DisplayMode> modes = new HashSet<>(videoModes.limit());
+        for (int i = 0; i < videoModes.limit(); i++) {
             GLFWVidMode mode = videoModes.get(i);
             modes.add(new DisplayMode(mode.width(), mode.height(), mode.redBits() + mode.blueBits() + mode.greenBits(), mode.refreshRate()));
         }
-        DisplayMode[] filteredModes = new DisplayMode[videoModes.sizeof()];
-        modes.toArray(filteredModes);
-
-        return filteredModes;
+        return modes.toArray(new DisplayMode[0]);
     }
 
     private static void resizeCallback(long window, int width, int height) {
