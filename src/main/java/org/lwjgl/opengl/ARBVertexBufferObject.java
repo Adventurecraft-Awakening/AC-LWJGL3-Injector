@@ -1,5 +1,7 @@
 package org.lwjgl.opengl;
 
+import org.lwjgl.system.NativeType;
+
 public final class ARBVertexBufferObject extends ARBBufferObject {
     /**
      * Accepted by the {@code target} parameters of BindBufferARB, BufferDataARB, BufferSubDataARB, MapBufferARB, UnmapBufferARB, GetBufferSubDataARB,
@@ -25,4 +27,29 @@ public final class ARBVertexBufferObject extends ARBBufferObject {
 
     /** Accepted by the {@code pname} parameter of GetVertexAttribivARB. */
     public static final int GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING_ARB = 0x889F;
+
+    public static native void glBindBufferARB(@NativeType("GLenum") int target, @NativeType("GLuint") int buffer);
+
+    public static native void nglDeleteBuffersARB(int n, long buffers);
+
+    public static native void nglGenBuffersARB(int n, long buffers);
+
+    @NativeType("GLboolean")
+    public static native boolean glIsBufferARB(@NativeType("GLuint") int buffer);
+
+    public static native void nglBufferDataARB(int target, long size, long data, int usage);
+
+    public static native void nglBufferSubDataARB(int target, long offset, long size, long data);
+
+    public static native void nglGetBufferSubDataARB(int target, long offset, long size, long data);
+
+    public static native long nglMapBufferARB(int target, int access);
+
+    @NativeType("GLboolean")
+    public static native boolean glUnmapBufferARB(@NativeType("GLenum") int target);
+
+    public static native void nglGetBufferParameterivARB(int target, int pname, long params);
+
+    public static native void nglGetBufferPointervARB(int target, int pname, long params);
+
 }

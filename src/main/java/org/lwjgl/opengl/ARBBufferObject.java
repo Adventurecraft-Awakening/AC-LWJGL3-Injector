@@ -21,71 +21,81 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 /**
  * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_vertex_buffer_object.txt">ARB_vertex_buffer_object</a> extension.
- * 
+ *
  * <p>This extension defines an interface that allows various types of data (especially vertex array data) to be cached in high-performance graphics memory on
  * the server, thereby increasing the rate of data transfers.</p>
- * 
+ *
  * <p>Chunks of data are encapsulated within "buffer objects", which conceptually are nothing more than arrays of bytes, just like any chunk of memory. An API
  * is provided whereby applications can read from or write to buffers, either via the GL itself ({@link #glBufferDataARB BufferDataARB}, {@link #glBufferSubDataARB BufferSubDataARB},
  * {@link #glGetBufferSubDataARB GetBufferSubDataARB}) or via a pointer to the memory.</p>
- * 
+ *
  * <p>The latter technique is known as "mapping" a buffer.  When an application maps a buffer, it is given a pointer to the memory. When the application
  * finishes reading from or writing to the memory, it is required to "unmap" the buffer before it is once again permitted to use that buffer as a GL data
  * source or sink. Mapping often allows applications to eliminate an extra data copy otherwise required to access the buffer, thereby enhancing
  * performance. In addition, requiring that applications unmap the buffer to use it as a data source or sink ensures that certain classes of latent
  * synchronization bugs cannot occur.</p>
- * 
+ *
  * <p>Although this extension only defines hooks for buffer objects to be used with OpenGL's vertex array APIs, the API defined in this extension permits
  * buffer objects to be used as either data sources or sinks for any GL command that takes a pointer as an argument. Normally, in the absence of this
  * extension, a pointer passed into the GL is simply a pointer to the user's data. This extension defines a mechanism whereby this pointer is used not as a
  * pointer to the data itself, but as an offset into a currently bound buffer object. The buffer object ID zero is reserved, and when buffer object zero is
  * bound to a given target, the commands affected by that buffer binding behave normally. When a nonzero buffer ID is bound, then the pointer represents an
  * offset.</p>
- * 
+ *
  * <p>In the case of vertex arrays, this extension defines not merely one binding for all attributes, but a separate binding for each individual attribute. As
  * a result, applications can source their attributes from multiple buffers. An application might, for example, have a model with constant texture
  * coordinates and variable geometry. The texture coordinates might be retrieved from a buffer object with the usage mode "STATIC_DRAW", indicating to the
  * GL that the application does not expect to update the contents of the buffer frequently or even at all, while the vertices might be retrieved from a
  * buffer object with the usage mode "STREAM_DRAW", indicating that the vertices will be updated on a regular basis.</p>
- * 
+ *
  * <p>In addition, a binding is defined by which applications can source index data (as used by {@link GL11C#glDrawElements DrawElements}, {@link GL12C#glDrawRangeElements DrawRangeElements}, and
  * {@link GL14C#glMultiDrawElements MultiDrawElements}) from a buffer object. On some platforms, this enables very large models to be rendered with no more than a few small commands
  * to the graphics device.</p>
- * 
+ *
  * <p>It is expected that a future extension will allow sourcing pixel data from and writing pixel data to a buffer object.</p>
- * 
+ *
  * <p>Promoted to core in {@link GL15 OpenGL 1.5}.</p>
  */
 public class ARBBufferObject {
 
-    static { GL.initialize(); }
+    static {
+        GL.initialize();
+    }
 
-    /** Accepted by the {@code usage} parameter of BufferDataARB. */
+    /**
+     * Accepted by the {@code usage} parameter of BufferDataARB.
+     */
     public static final int
-        GL_STREAM_DRAW_ARB  = 0x88E0,
-        GL_STREAM_READ_ARB  = 0x88E1,
-        GL_STREAM_COPY_ARB  = 0x88E2,
-        GL_STATIC_DRAW_ARB  = 0x88E4,
-        GL_STATIC_READ_ARB  = 0x88E5,
-        GL_STATIC_COPY_ARB  = 0x88E6,
+        GL_STREAM_DRAW_ARB = 0x88E0,
+        GL_STREAM_READ_ARB = 0x88E1,
+        GL_STREAM_COPY_ARB = 0x88E2,
+        GL_STATIC_DRAW_ARB = 0x88E4,
+        GL_STATIC_READ_ARB = 0x88E5,
+        GL_STATIC_COPY_ARB = 0x88E6,
         GL_DYNAMIC_DRAW_ARB = 0x88E8,
         GL_DYNAMIC_READ_ARB = 0x88E9,
         GL_DYNAMIC_COPY_ARB = 0x88EA;
 
-    /** Accepted by the {@code access} parameter of MapBufferARB. */
+    /**
+     * Accepted by the {@code access} parameter of MapBufferARB.
+     */
     public static final int
-        GL_READ_ONLY_ARB  = 0x88B8,
+        GL_READ_ONLY_ARB = 0x88B8,
         GL_WRITE_ONLY_ARB = 0x88B9,
         GL_READ_WRITE_ARB = 0x88BA;
 
-    /** Accepted by the {@code pname} parameter of GetBufferParameterivARB. */
+    /**
+     * Accepted by the {@code pname} parameter of GetBufferParameterivARB.
+     */
     public static final int
-        GL_BUFFER_SIZE_ARB   = 0x8764,
-        GL_BUFFER_USAGE_ARB  = 0x8765,
+        GL_BUFFER_SIZE_ARB = 0x8764,
+        GL_BUFFER_USAGE_ARB = 0x8765,
         GL_BUFFER_ACCESS_ARB = 0x88BB,
         GL_BUFFER_MAPPED_ARB = 0x88BC;
 
-    /** Accepted by the {@code pname} parameter of GetBufferPointervARB. */
+    /**
+     * Accepted by the {@code pname} parameter of GetBufferPointervARB.
+     */
     public static final int GL_BUFFER_MAP_POINTER_ARB = 0x88BD;
 
     protected ARBBufferObject() {
@@ -100,7 +110,9 @@ public class ARBBufferObject {
      * @param target the target to which the buffer object is bound. One of:<br><table><tr><td>{@link GL15#GL_ARRAY_BUFFER ARRAY_BUFFER}</td><td>{@link GL15#GL_ELEMENT_ARRAY_BUFFER ELEMENT_ARRAY_BUFFER}</td><td>{@link GL21#GL_PIXEL_PACK_BUFFER PIXEL_PACK_BUFFER}</td><td>{@link GL21#GL_PIXEL_UNPACK_BUFFER PIXEL_UNPACK_BUFFER}</td></tr><tr><td>{@link GL30#GL_TRANSFORM_FEEDBACK_BUFFER TRANSFORM_FEEDBACK_BUFFER}</td><td>{@link GL31#GL_UNIFORM_BUFFER UNIFORM_BUFFER}</td><td>{@link GL31#GL_TEXTURE_BUFFER TEXTURE_BUFFER}</td><td>{@link GL31#GL_COPY_READ_BUFFER COPY_READ_BUFFER}</td></tr><tr><td>{@link GL31#GL_COPY_WRITE_BUFFER COPY_WRITE_BUFFER}</td><td>{@link GL40#GL_DRAW_INDIRECT_BUFFER DRAW_INDIRECT_BUFFER}</td><td>{@link GL42#GL_ATOMIC_COUNTER_BUFFER ATOMIC_COUNTER_BUFFER}</td><td>{@link GL43#GL_DISPATCH_INDIRECT_BUFFER DISPATCH_INDIRECT_BUFFER}</td></tr><tr><td>{@link GL43#GL_SHADER_STORAGE_BUFFER SHADER_STORAGE_BUFFER}</td><td>{@link ARBIndirectParameters#GL_PARAMETER_BUFFER_ARB PARAMETER_BUFFER_ARB}</td></tr></table>
      * @param buffer the name of a buffer object
      */
-    public static native void glBindBufferARB(@NativeType("GLenum") int target, @NativeType("GLuint") int buffer);
+    public static void glBindBufferARB(@NativeType("GLenum") int target, @NativeType("GLuint") int buffer) {
+        ARBVertexBufferObject.glBindBufferARB(target, buffer);
+    }
 
     // --- [ glDeleteBuffersARB ] ---
 
@@ -109,7 +121,9 @@ public class ARBBufferObject {
      *
      * @param n the number of buffer objects to be deleted
      */
-    public static native void nglDeleteBuffersARB(int n, long buffers);
+    public static void nglDeleteBuffersARB(int n, long buffers) {
+        ARBVertexBufferObject.nglDeleteBuffersARB(n, buffers);
+    }
 
     /**
      * Deletes named buffer objects.
@@ -120,9 +134,12 @@ public class ARBBufferObject {
         nglDeleteBuffersARB(buffers.remaining(), memAddress(buffers));
     }
 
-    /** Deletes named buffer objects. */
+    /**
+     * Deletes named buffer objects.
+     */
     public static void glDeleteBuffersARB(@NativeType("GLuint const *") int buffer) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
+        MemoryStack stack = stackGet();
+        int stackPointer = stack.getPointer();
         try {
             IntBuffer buffers = stack.ints(buffer);
             nglDeleteBuffersARB(1, memAddress(buffers));
@@ -138,7 +155,9 @@ public class ARBBufferObject {
      *
      * @param n the number of buffer object names to be generated
      */
-    public static native void nglGenBuffersARB(int n, long buffers);
+    public static void nglGenBuffersARB(int n, long buffers) {
+        ARBVertexBufferObject.nglGenBuffersARB(n, buffers);
+    }
 
     /**
      * Generates buffer object names.
@@ -149,10 +168,13 @@ public class ARBBufferObject {
         nglGenBuffersARB(buffers.remaining(), memAddress(buffers));
     }
 
-    /** Generates buffer object names. */
+    /**
+     * Generates buffer object names.
+     */
     @NativeType("void")
     public static int glGenBuffersARB() {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
+        MemoryStack stack = stackGet();
+        int stackPointer = stack.getPointer();
         try {
             IntBuffer buffers = stack.callocInt(1);
             nglGenBuffersARB(1, memAddress(buffers));
@@ -170,7 +192,9 @@ public class ARBBufferObject {
      * @param buffer a value that may be the name of a buffer object
      */
     @NativeType("GLboolean")
-    public static native boolean glIsBufferARB(@NativeType("GLuint") int buffer);
+    public static boolean glIsBufferARB(@NativeType("GLuint") int buffer) {
+        return ARBVertexBufferObject.glIsBufferARB(buffer);
+    }
 
     // --- [ glBufferDataARB ] ---
 
@@ -179,24 +203,26 @@ public class ARBBufferObject {
      *
      * @param size the size in bytes of the buffer object's new data store
      */
-    public static native void nglBufferDataARB(int target, long size, long data, int usage);
+    public static void nglBufferDataARB(int target, long size, long data, int usage) {
+        ARBVertexBufferObject.nglBufferDataARB(target, size, data, usage);
+    }
 
     /**
      * Creates and initializes a buffer object's data store.
-     * 
+     *
      * <p>{@code usage} is a hint to the GL implementation as to how a buffer object's data store will be accessed. This enables the GL implementation to make
      * more intelligent decisions that may significantly impact buffer object performance. It does not, however, constrain the actual usage of the data store.
      * {@code usage} can be broken down into two parts: first, the frequency of access (modification and usage), and second, the nature of that access. The
      * frequency of access may be one of these:</p>
-     * 
+     *
      * <ul>
      * <li><em>STREAM</em> - The data store contents will be modified once and used at most a few times.</li>
      * <li><em>STATIC</em> - The data store contents will be modified once and used many times.</li>
      * <li><em>DYNAMIC</em> - The data store contents will be modified repeatedly and used many times.</li>
      * </ul>
-     * 
+     *
      * <p>The nature of access may be one of these:</p>
-     * 
+     *
      * <ul>
      * <li><em>DRAW</em> - The data store contents are modified by the application, and used as the source for GL drawing and image specification commands.</li>
      * <li><em>READ</em> - The data store contents are modified by reading data from the GL, and used to return that data when queried by the application.</li>
@@ -213,20 +239,20 @@ public class ARBBufferObject {
 
     /**
      * Creates and initializes a buffer object's data store.
-     * 
+     *
      * <p>{@code usage} is a hint to the GL implementation as to how a buffer object's data store will be accessed. This enables the GL implementation to make
      * more intelligent decisions that may significantly impact buffer object performance. It does not, however, constrain the actual usage of the data store.
      * {@code usage} can be broken down into two parts: first, the frequency of access (modification and usage), and second, the nature of that access. The
      * frequency of access may be one of these:</p>
-     * 
+     *
      * <ul>
      * <li><em>STREAM</em> - The data store contents will be modified once and used at most a few times.</li>
      * <li><em>STATIC</em> - The data store contents will be modified once and used many times.</li>
      * <li><em>DYNAMIC</em> - The data store contents will be modified repeatedly and used many times.</li>
      * </ul>
-     * 
+     *
      * <p>The nature of access may be one of these:</p>
-     * 
+     *
      * <ul>
      * <li><em>DRAW</em> - The data store contents are modified by the application, and used as the source for GL drawing and image specification commands.</li>
      * <li><em>READ</em> - The data store contents are modified by reading data from the GL, and used to return that data when queried by the application.</li>
@@ -243,20 +269,20 @@ public class ARBBufferObject {
 
     /**
      * Creates and initializes a buffer object's data store.
-     * 
+     *
      * <p>{@code usage} is a hint to the GL implementation as to how a buffer object's data store will be accessed. This enables the GL implementation to make
      * more intelligent decisions that may significantly impact buffer object performance. It does not, however, constrain the actual usage of the data store.
      * {@code usage} can be broken down into two parts: first, the frequency of access (modification and usage), and second, the nature of that access. The
      * frequency of access may be one of these:</p>
-     * 
+     *
      * <ul>
      * <li><em>STREAM</em> - The data store contents will be modified once and used at most a few times.</li>
      * <li><em>STATIC</em> - The data store contents will be modified once and used many times.</li>
      * <li><em>DYNAMIC</em> - The data store contents will be modified repeatedly and used many times.</li>
      * </ul>
-     * 
+     *
      * <p>The nature of access may be one of these:</p>
-     * 
+     *
      * <ul>
      * <li><em>DRAW</em> - The data store contents are modified by the application, and used as the source for GL drawing and image specification commands.</li>
      * <li><em>READ</em> - The data store contents are modified by reading data from the GL, and used to return that data when queried by the application.</li>
@@ -273,20 +299,20 @@ public class ARBBufferObject {
 
     /**
      * Creates and initializes a buffer object's data store.
-     * 
+     *
      * <p>{@code usage} is a hint to the GL implementation as to how a buffer object's data store will be accessed. This enables the GL implementation to make
      * more intelligent decisions that may significantly impact buffer object performance. It does not, however, constrain the actual usage of the data store.
      * {@code usage} can be broken down into two parts: first, the frequency of access (modification and usage), and second, the nature of that access. The
      * frequency of access may be one of these:</p>
-     * 
+     *
      * <ul>
      * <li><em>STREAM</em> - The data store contents will be modified once and used at most a few times.</li>
      * <li><em>STATIC</em> - The data store contents will be modified once and used many times.</li>
      * <li><em>DYNAMIC</em> - The data store contents will be modified repeatedly and used many times.</li>
      * </ul>
-     * 
+     *
      * <p>The nature of access may be one of these:</p>
-     * 
+     *
      * <ul>
      * <li><em>DRAW</em> - The data store contents are modified by the application, and used as the source for GL drawing and image specification commands.</li>
      * <li><em>READ</em> - The data store contents are modified by reading data from the GL, and used to return that data when queried by the application.</li>
@@ -303,20 +329,20 @@ public class ARBBufferObject {
 
     /**
      * Creates and initializes a buffer object's data store.
-     * 
+     *
      * <p>{@code usage} is a hint to the GL implementation as to how a buffer object's data store will be accessed. This enables the GL implementation to make
      * more intelligent decisions that may significantly impact buffer object performance. It does not, however, constrain the actual usage of the data store.
      * {@code usage} can be broken down into two parts: first, the frequency of access (modification and usage), and second, the nature of that access. The
      * frequency of access may be one of these:</p>
-     * 
+     *
      * <ul>
      * <li><em>STREAM</em> - The data store contents will be modified once and used at most a few times.</li>
      * <li><em>STATIC</em> - The data store contents will be modified once and used many times.</li>
      * <li><em>DYNAMIC</em> - The data store contents will be modified repeatedly and used many times.</li>
      * </ul>
-     * 
+     *
      * <p>The nature of access may be one of these:</p>
-     * 
+     *
      * <ul>
      * <li><em>DRAW</em> - The data store contents are modified by the application, and used as the source for GL drawing and image specification commands.</li>
      * <li><em>READ</em> - The data store contents are modified by reading data from the GL, and used to return that data when queried by the application.</li>
@@ -333,20 +359,20 @@ public class ARBBufferObject {
 
     /**
      * Creates and initializes a buffer object's data store.
-     * 
+     *
      * <p>{@code usage} is a hint to the GL implementation as to how a buffer object's data store will be accessed. This enables the GL implementation to make
      * more intelligent decisions that may significantly impact buffer object performance. It does not, however, constrain the actual usage of the data store.
      * {@code usage} can be broken down into two parts: first, the frequency of access (modification and usage), and second, the nature of that access. The
      * frequency of access may be one of these:</p>
-     * 
+     *
      * <ul>
      * <li><em>STREAM</em> - The data store contents will be modified once and used at most a few times.</li>
      * <li><em>STATIC</em> - The data store contents will be modified once and used many times.</li>
      * <li><em>DYNAMIC</em> - The data store contents will be modified repeatedly and used many times.</li>
      * </ul>
-     * 
+     *
      * <p>The nature of access may be one of these:</p>
-     * 
+     *
      * <ul>
      * <li><em>DRAW</em> - The data store contents are modified by the application, and used as the source for GL drawing and image specification commands.</li>
      * <li><em>READ</em> - The data store contents are modified by reading data from the GL, and used to return that data when queried by the application.</li>
@@ -368,7 +394,9 @@ public class ARBBufferObject {
      *
      * @param size the size in bytes of the data store region being replaced
      */
-    public static native void nglBufferSubDataARB(int target, long offset, long size, long data);
+    public static void nglBufferSubDataARB(int target, long offset, long size, long data) {
+        ARBVertexBufferObject.nglBufferSubDataARB(target, offset, size, data);
+    }
 
     /**
      * Updates a subset of a buffer object's data store.
@@ -432,7 +460,9 @@ public class ARBBufferObject {
      *
      * @param size the size in bytes of the data store region being returned
      */
-    public static native void nglGetBufferSubDataARB(int target, long offset, long size, long data);
+    public static void nglGetBufferSubDataARB(int target, long offset, long size, long data) {
+        ARBVertexBufferObject.nglGetBufferSubDataARB(target, offset, size, data);
+    }
 
     /**
      * Returns a subset of a buffer object's data store.
@@ -491,14 +521,18 @@ public class ARBBufferObject {
 
     // --- [ glMapBufferARB ] ---
 
-    /** Unsafe version of: {@link #glMapBufferARB MapBufferARB} */
-    public static native long nglMapBufferARB(int target, int access);
+    /**
+     * Unsafe version of: {@link #glMapBufferARB MapBufferARB}
+     */
+    public static long nglMapBufferARB(int target, int access) {
+        return ARBVertexBufferObject.nglMapBufferARB(target, access);
+    }
 
     /**
      * Maps a buffer object's data store.
-     * 
+     *
      * <p><b>LWJGL note</b>: This method comes in 3 flavors:</p>
-     * 
+     *
      * <ol>
      * <li>{@link #glMapBufferARB(int, int)} - Calls {@link #glGetBufferParameterivARB GetBufferParameterivARB} to retrieve the buffer size and a new ByteBuffer instance is always returned.</li>
      * <li>{@link #glMapBufferARB(int, int, ByteBuffer)} - Calls {@link #glGetBufferParameterivARB GetBufferParameterivARB} to retrieve the buffer size and the {@code old_buffer} parameter is reused if not null.</li>
@@ -517,9 +551,9 @@ public class ARBBufferObject {
 
     /**
      * Maps a buffer object's data store.
-     * 
+     *
      * <p><b>LWJGL note</b>: This method comes in 3 flavors:</p>
-     * 
+     *
      * <ol>
      * <li>{@link #glMapBufferARB(int, int)} - Calls {@link #glGetBufferParameterivARB GetBufferParameterivARB} to retrieve the buffer size and a new ByteBuffer instance is always returned.</li>
      * <li>{@link #glMapBufferARB(int, int, ByteBuffer)} - Calls {@link #glGetBufferParameterivARB GetBufferParameterivARB} to retrieve the buffer size and the {@code old_buffer} parameter is reused if not null.</li>
@@ -539,9 +573,9 @@ public class ARBBufferObject {
 
     /**
      * Maps a buffer object's data store.
-     * 
+     *
      * <p><b>LWJGL note</b>: This method comes in 3 flavors:</p>
-     * 
+     *
      * <ol>
      * <li>{@link #glMapBufferARB(int, int)} - Calls {@link #glGetBufferParameterivARB GetBufferParameterivARB} to retrieve the buffer size and a new ByteBuffer instance is always returned.</li>
      * <li>{@link #glMapBufferARB(int, int, ByteBuffer)} - Calls {@link #glGetBufferParameterivARB GetBufferParameterivARB} to retrieve the buffer size and the {@code old_buffer} parameter is reused if not null.</li>
@@ -555,14 +589,14 @@ public class ARBBufferObject {
     @NativeType("void *")
     public static ByteBuffer glMapBufferARB(@NativeType("GLenum") int target, @NativeType("GLenum") int access, long length, @Nullable ByteBuffer old_buffer) {
         long __result = nglMapBufferARB(target, access);
-        return apiGetMappedBuffer(old_buffer, __result, (int)length);
+        return apiGetMappedBuffer(old_buffer, __result, (int) length);
     }
 
     // --- [ glUnmapBufferARB ] ---
 
     /**
      * Relinquishes the mapping of a buffer object and invalidates the pointer to its data store.
-     * 
+     *
      * <p>Returns TRUE unless data values in the buffer’s data store have become corrupted during the period that the buffer was mapped. Such corruption can be
      * the result of a screen resolution change or other window system-dependent event that causes system heaps such as those for high-performance graphics
      * memory to be discarded. GL implementations must guarantee that such corruption can occur only during the periods that a buffer’s data store is mapped.
@@ -571,12 +605,18 @@ public class ARBBufferObject {
      * @param target the target buffer object being unmapped. One of:<br><table><tr><td>{@link GL15#GL_ARRAY_BUFFER ARRAY_BUFFER}</td><td>{@link GL15#GL_ELEMENT_ARRAY_BUFFER ELEMENT_ARRAY_BUFFER}</td><td>{@link GL21#GL_PIXEL_PACK_BUFFER PIXEL_PACK_BUFFER}</td><td>{@link GL21#GL_PIXEL_UNPACK_BUFFER PIXEL_UNPACK_BUFFER}</td></tr><tr><td>{@link GL30#GL_TRANSFORM_FEEDBACK_BUFFER TRANSFORM_FEEDBACK_BUFFER}</td><td>{@link GL31#GL_UNIFORM_BUFFER UNIFORM_BUFFER}</td><td>{@link GL31#GL_TEXTURE_BUFFER TEXTURE_BUFFER}</td><td>{@link GL31#GL_COPY_READ_BUFFER COPY_READ_BUFFER}</td></tr><tr><td>{@link GL31#GL_COPY_WRITE_BUFFER COPY_WRITE_BUFFER}</td><td>{@link GL40#GL_DRAW_INDIRECT_BUFFER DRAW_INDIRECT_BUFFER}</td><td>{@link GL42#GL_ATOMIC_COUNTER_BUFFER ATOMIC_COUNTER_BUFFER}</td><td>{@link GL43#GL_DISPATCH_INDIRECT_BUFFER DISPATCH_INDIRECT_BUFFER}</td></tr><tr><td>{@link GL43#GL_SHADER_STORAGE_BUFFER SHADER_STORAGE_BUFFER}</td><td>{@link ARBIndirectParameters#GL_PARAMETER_BUFFER_ARB PARAMETER_BUFFER_ARB}</td></tr></table>
      */
     @NativeType("GLboolean")
-    public static native boolean glUnmapBufferARB(@NativeType("GLenum") int target);
+    public static boolean glUnmapBufferARB(@NativeType("GLenum") int target) {
+        return ARBVertexBufferObject.glUnmapBufferARB(target);
+    }
 
     // --- [ glGetBufferParameterivARB ] ---
 
-    /** Unsafe version of: {@link #glGetBufferParameterivARB GetBufferParameterivARB} */
-    public static native void nglGetBufferParameterivARB(int target, int pname, long params);
+    /**
+     * Unsafe version of: {@link #glGetBufferParameterivARB GetBufferParameterivARB}
+     */
+    public static void nglGetBufferParameterivARB(int target, int pname, long params) {
+        ARBVertexBufferObject.nglGetBufferParameterivARB(target, pname, params);
+    }
 
     /**
      * Returns the value of a buffer object parameter.
@@ -600,7 +640,8 @@ public class ARBBufferObject {
      */
     @NativeType("void")
     public static int glGetBufferParameteriARB(@NativeType("GLenum") int target, @NativeType("GLenum") int pname) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
+        MemoryStack stack = stackGet();
+        int stackPointer = stack.getPointer();
         try {
             IntBuffer params = stack.callocInt(1);
             nglGetBufferParameterivARB(target, pname, memAddress(params));
@@ -612,8 +653,12 @@ public class ARBBufferObject {
 
     // --- [ glGetBufferPointervARB ] ---
 
-    /** Unsafe version of: {@link #glGetBufferPointervARB GetBufferPointervARB} */
-    public static native void nglGetBufferPointervARB(int target, int pname, long params);
+    /**
+     * Unsafe version of: {@link #glGetBufferPointervARB GetBufferPointervARB}
+     */
+    public static void nglGetBufferPointervARB(int target, int pname, long params) {
+        ARBVertexBufferObject.nglGetBufferPointervARB(target, pname, params);
+    }
 
     /**
      * Returns the pointer to a mapped buffer object's data store.
@@ -637,7 +682,8 @@ public class ARBBufferObject {
      */
     @NativeType("void")
     public static long glGetBufferPointerARB(@NativeType("GLenum") int target, @NativeType("GLenum") int pname) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
+        MemoryStack stack = stackGet();
+        int stackPointer = stack.getPointer();
         try {
             PointerBuffer params = stack.callocPointer(1);
             nglGetBufferPointervARB(target, pname, memAddress(params));
@@ -647,7 +693,9 @@ public class ARBBufferObject {
         }
     }
 
-    /** Array version of: {@link #glDeleteBuffersARB DeleteBuffersARB} */
+    /**
+     * Array version of: {@link #glDeleteBuffersARB DeleteBuffersARB}
+     */
     public static void glDeleteBuffersARB(@NativeType("GLuint const *") int[] buffers) {
         long __functionAddress = GL.getICD().glDeleteBuffersARB;
         if (CHECKS) {
@@ -656,7 +704,9 @@ public class ARBBufferObject {
         callPV(buffers.length, buffers, __functionAddress);
     }
 
-    /** Array version of: {@link #glGenBuffersARB GenBuffersARB} */
+    /**
+     * Array version of: {@link #glGenBuffersARB GenBuffersARB}
+     */
     public static void glGenBuffersARB(@NativeType("GLuint *") int[] buffers) {
         long __functionAddress = GL.getICD().glGenBuffersARB;
         if (CHECKS) {
@@ -665,7 +715,9 @@ public class ARBBufferObject {
         callPV(buffers.length, buffers, __functionAddress);
     }
 
-    /** Array version of: {@link #glBufferDataARB BufferDataARB} */
+    /**
+     * Array version of: {@link #glBufferDataARB BufferDataARB}
+     */
     public static void glBufferDataARB(@NativeType("GLenum") int target, @NativeType("void const *") short[] data, @NativeType("GLenum") int usage) {
         long __functionAddress = GL.getICD().glBufferDataARB;
         if (CHECKS) {
@@ -674,7 +726,9 @@ public class ARBBufferObject {
         callPPV(target, Integer.toUnsignedLong(data.length) << 1, data, usage, __functionAddress);
     }
 
-    /** Array version of: {@link #glBufferDataARB BufferDataARB} */
+    /**
+     * Array version of: {@link #glBufferDataARB BufferDataARB}
+     */
     public static void glBufferDataARB(@NativeType("GLenum") int target, @NativeType("void const *") int[] data, @NativeType("GLenum") int usage) {
         long __functionAddress = GL.getICD().glBufferDataARB;
         if (CHECKS) {
@@ -683,7 +737,9 @@ public class ARBBufferObject {
         callPPV(target, Integer.toUnsignedLong(data.length) << 2, data, usage, __functionAddress);
     }
 
-    /** Array version of: {@link #glBufferDataARB BufferDataARB} */
+    /**
+     * Array version of: {@link #glBufferDataARB BufferDataARB}
+     */
     public static void glBufferDataARB(@NativeType("GLenum") int target, @NativeType("void const *") float[] data, @NativeType("GLenum") int usage) {
         long __functionAddress = GL.getICD().glBufferDataARB;
         if (CHECKS) {
@@ -692,7 +748,9 @@ public class ARBBufferObject {
         callPPV(target, Integer.toUnsignedLong(data.length) << 2, data, usage, __functionAddress);
     }
 
-    /** Array version of: {@link #glBufferDataARB BufferDataARB} */
+    /**
+     * Array version of: {@link #glBufferDataARB BufferDataARB}
+     */
     public static void glBufferDataARB(@NativeType("GLenum") int target, @NativeType("void const *") double[] data, @NativeType("GLenum") int usage) {
         long __functionAddress = GL.getICD().glBufferDataARB;
         if (CHECKS) {
@@ -701,7 +759,9 @@ public class ARBBufferObject {
         callPPV(target, Integer.toUnsignedLong(data.length) << 3, data, usage, __functionAddress);
     }
 
-    /** Array version of: {@link #glBufferSubDataARB BufferSubDataARB} */
+    /**
+     * Array version of: {@link #glBufferSubDataARB BufferSubDataARB}
+     */
     public static void glBufferSubDataARB(@NativeType("GLenum") int target, @NativeType("GLintptrARB") long offset, @NativeType("void const *") short[] data) {
         long __functionAddress = GL.getICD().glBufferSubDataARB;
         if (CHECKS) {
@@ -710,7 +770,9 @@ public class ARBBufferObject {
         callPPPV(target, offset, Integer.toUnsignedLong(data.length) << 1, data, __functionAddress);
     }
 
-    /** Array version of: {@link #glBufferSubDataARB BufferSubDataARB} */
+    /**
+     * Array version of: {@link #glBufferSubDataARB BufferSubDataARB}
+     */
     public static void glBufferSubDataARB(@NativeType("GLenum") int target, @NativeType("GLintptrARB") long offset, @NativeType("void const *") int[] data) {
         long __functionAddress = GL.getICD().glBufferSubDataARB;
         if (CHECKS) {
@@ -719,7 +781,9 @@ public class ARBBufferObject {
         callPPPV(target, offset, Integer.toUnsignedLong(data.length) << 2, data, __functionAddress);
     }
 
-    /** Array version of: {@link #glBufferSubDataARB BufferSubDataARB} */
+    /**
+     * Array version of: {@link #glBufferSubDataARB BufferSubDataARB}
+     */
     public static void glBufferSubDataARB(@NativeType("GLenum") int target, @NativeType("GLintptrARB") long offset, @NativeType("void const *") float[] data) {
         long __functionAddress = GL.getICD().glBufferSubDataARB;
         if (CHECKS) {
@@ -728,7 +792,9 @@ public class ARBBufferObject {
         callPPPV(target, offset, Integer.toUnsignedLong(data.length) << 2, data, __functionAddress);
     }
 
-    /** Array version of: {@link #glBufferSubDataARB BufferSubDataARB} */
+    /**
+     * Array version of: {@link #glBufferSubDataARB BufferSubDataARB}
+     */
     public static void glBufferSubDataARB(@NativeType("GLenum") int target, @NativeType("GLintptrARB") long offset, @NativeType("void const *") double[] data) {
         long __functionAddress = GL.getICD().glBufferSubDataARB;
         if (CHECKS) {
@@ -737,7 +803,9 @@ public class ARBBufferObject {
         callPPPV(target, offset, Integer.toUnsignedLong(data.length) << 3, data, __functionAddress);
     }
 
-    /** Array version of: {@link #glGetBufferSubDataARB GetBufferSubDataARB} */
+    /**
+     * Array version of: {@link #glGetBufferSubDataARB GetBufferSubDataARB}
+     */
     public static void glGetBufferSubDataARB(@NativeType("GLenum") int target, @NativeType("GLintptrARB") long offset, @NativeType("void *") short[] data) {
         long __functionAddress = GL.getICD().glGetBufferSubDataARB;
         if (CHECKS) {
@@ -746,7 +814,9 @@ public class ARBBufferObject {
         callPPPV(target, offset, Integer.toUnsignedLong(data.length) << 1, data, __functionAddress);
     }
 
-    /** Array version of: {@link #glGetBufferSubDataARB GetBufferSubDataARB} */
+    /**
+     * Array version of: {@link #glGetBufferSubDataARB GetBufferSubDataARB}
+     */
     public static void glGetBufferSubDataARB(@NativeType("GLenum") int target, @NativeType("GLintptrARB") long offset, @NativeType("void *") int[] data) {
         long __functionAddress = GL.getICD().glGetBufferSubDataARB;
         if (CHECKS) {
@@ -755,7 +825,9 @@ public class ARBBufferObject {
         callPPPV(target, offset, Integer.toUnsignedLong(data.length) << 2, data, __functionAddress);
     }
 
-    /** Array version of: {@link #glGetBufferSubDataARB GetBufferSubDataARB} */
+    /**
+     * Array version of: {@link #glGetBufferSubDataARB GetBufferSubDataARB}
+     */
     public static void glGetBufferSubDataARB(@NativeType("GLenum") int target, @NativeType("GLintptrARB") long offset, @NativeType("void *") float[] data) {
         long __functionAddress = GL.getICD().glGetBufferSubDataARB;
         if (CHECKS) {
@@ -764,7 +836,9 @@ public class ARBBufferObject {
         callPPPV(target, offset, Integer.toUnsignedLong(data.length) << 2, data, __functionAddress);
     }
 
-    /** Array version of: {@link #glGetBufferSubDataARB GetBufferSubDataARB} */
+    /**
+     * Array version of: {@link #glGetBufferSubDataARB GetBufferSubDataARB}
+     */
     public static void glGetBufferSubDataARB(@NativeType("GLenum") int target, @NativeType("GLintptrARB") long offset, @NativeType("void *") double[] data) {
         long __functionAddress = GL.getICD().glGetBufferSubDataARB;
         if (CHECKS) {
@@ -773,7 +847,9 @@ public class ARBBufferObject {
         callPPPV(target, offset, Integer.toUnsignedLong(data.length) << 3, data, __functionAddress);
     }
 
-    /** Array version of: {@link #glGetBufferParameterivARB GetBufferParameterivARB} */
+    /**
+     * Array version of: {@link #glGetBufferParameterivARB GetBufferParameterivARB}
+     */
     public static void glGetBufferParameterivARB(@NativeType("GLenum") int target, @NativeType("GLenum") int pname, @NativeType("GLint *") int[] params) {
         long __functionAddress = GL.getICD().glGetBufferParameterivARB;
         if (CHECKS) {
