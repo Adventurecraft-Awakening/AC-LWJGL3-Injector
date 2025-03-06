@@ -4,7 +4,12 @@
 # against bad commits.
 
 name: Build
-on: [push, pull_request, workflow_dispatch]
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  release:
+    types: [published]
 
 jobs:
   build:
@@ -39,7 +44,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: build
-        run: ./gradlew build --no-daemon
+        run: ./gradlew build
 
       - name: capture build artifacts
         if: ${{ matrix.artifacts }}
@@ -47,3 +52,12 @@ jobs:
         with:
           name: Artifacts
           path: build/libs/
+
+      - name: publish
+        if: ${{ matrix.artifacts && (github.event_name == 'release') }}
+        run: ./gradlew publish
+        env:
+          MVN_CENTRAL_USERNAME: ${{ secrets.MVN_CENTRAL_USERNAME }}
+          MVN_CENTRAL_PASSWORD: ${{ secrets.MVN_CENTRAL_PASSWORD }}
+          GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
+          GPG_SIGNING_KEY_PASSWORD: ${{ secrets.GPG_SIGNING_KEY_PASSWORD }}

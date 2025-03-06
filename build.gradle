@@ -1,6 +1,7 @@
 plugins {
     id "maven-publish"
     id "java"
+    id "signing"
 }
 
 version = project.lib_version
@@ -45,6 +46,8 @@ tasks.withType(JavaCompile).configureEach {
 
 java {
     sourceCompatibility = targetCompatibility = JavaVersion.VERSION_23
+
+    withSourcesJar()
 }
 
 jar {
@@ -63,9 +66,22 @@ publishing {
     }
 
     repositories {
-        // Add repositories to publish to here.
-        // Notice: This block does NOT have the same function as the block in the top level.
-        // The repositories here will be used for publishing your artifact,
-        // not for retrieving dependencies.
+        maven {
+            name = "Central"
+            url = "https://central.sonatype.org/service/local/staging/deploy/maven2/"
+
+            credentials {
+                username = System.getenv("MVN_CENTRAL_USERNAME")
+                password = System.getenv("MVN_CENTRAL_PASSWORD")
+            }
+        }
     }
+}
+
+signing {
+    useInMemoryPgpKeys(
+        System.getenv("GPG_SIGNING_KEY"),
+        System.getenv("GPG_SIGNING_KEY_PASSWORD"))
+
+    sign publishing.publications.mavenJava
 }
