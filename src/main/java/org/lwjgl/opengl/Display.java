@@ -314,8 +314,13 @@ public class Display {
         if (Keyboard.isCreated()) {
             Keyboard.destroy();
         }
+
+        LwjglUtil.tryFree(GLFW.glfwSetWindowSizeCallback(handle, null));
+
+        // TODO: glfwDestroyWindow?
         // Hide the window while maintaining it's context
         //GLFW.glfwHideWindow(handle);
+
         window_created = false;
     }
 
@@ -325,7 +330,6 @@ public class Display {
         // Terminate GLFW and free the error callback
         GLFW.glfwTerminate();
 
-        LwjglUtil.tryFree(GLFW.glfwSetWindowSizeCallback(handle, null));
         LwjglUtil.tryFree(GLFW.glfwSetErrorCallback(null));
     }
 
