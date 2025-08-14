@@ -4,6 +4,10 @@ public final class FastMath {
 
     public static final boolean USE_FMA;
 
+    public static float clamp(float value, float min, float max) {
+        return Math.min(max, Math.max(value, min));
+    }
+
     public static float mulAdd(float a, float b, float c) {
         if (USE_FMA) {
             return Math.fma(a, b, c);

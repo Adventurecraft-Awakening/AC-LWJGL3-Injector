@@ -43,7 +43,7 @@ import java.nio.FloatBuffer;
  * $Id$
  */
 
-public class Vector2f extends Vector implements Serializable, ReadableVector2f, WritableVector2f {
+public final class Vector2f extends Vector<Vector2f> implements Serializable, ReadableVector2f, WritableVector2f {
 
     private static final long serialVersionUID = 1L;
 
@@ -68,6 +68,11 @@ public class Vector2f extends Vector implements Serializable, ReadableVector2f, 
      */
     public Vector2f(float x, float y) {
         set(x, y);
+    }
+
+    @Override
+    protected Vector2f create() {
+        return new Vector2f();
     }
 
     /* (non-Javadoc)
@@ -112,7 +117,7 @@ public class Vector2f extends Vector implements Serializable, ReadableVector2f, 
      * Negate a vector
      * @return this
      */
-    public Vector negate() {
+    public Vector2f negate() {
         x = -x;
         y = -y;
         return this;
@@ -131,22 +136,6 @@ public class Vector2f extends Vector implements Serializable, ReadableVector2f, 
         return dest;
     }
 
-
-    /**
-     * Normalise this vector and place the result in another vector.
-     * @param dest The destination vector, or null if a new vector is to be created
-     * @return the normalised vector
-     */
-    public Vector2f normalise(Vector2f dest) {
-        float l = length();
-
-        if (dest == null)
-            dest = new Vector2f(x / l, y / l);
-        else
-            dest.set(x / l, y / l);
-
-        return dest;
-    }
 
     /**
      * The dot product of two vectors is calculated as
@@ -186,11 +175,9 @@ public class Vector2f extends Vector implements Serializable, ReadableVector2f, 
      */
     public static Vector2f add(Vector2f left, Vector2f right, Vector2f dest) {
         if (dest == null)
-            return new Vector2f(left.x + right.x, left.y + right.y);
-        else {
-            dest.set(left.x + right.x, left.y + right.y);
-            return dest;
-        }
+            return new Vector2f();
+        dest.set(left.x + right.x, left.y + right.y);
+        return dest;
     }
 
     /**
@@ -203,11 +190,9 @@ public class Vector2f extends Vector implements Serializable, ReadableVector2f, 
      */
     public static Vector2f sub(Vector2f left, Vector2f right, Vector2f dest) {
         if (dest == null)
-            return new Vector2f(left.x - right.x, left.y - right.y);
-        else {
-            dest.set(left.x - right.x, left.y - right.y);
-            return dest;
-        }
+            return new Vector2f();
+        dest.set(left.x - right.x, left.y - right.y);
+        return dest;
     }
 
     /**
@@ -215,7 +200,7 @@ public class Vector2f extends Vector implements Serializable, ReadableVector2f, 
      * @param buf The buffer to store it in, at the current position
      * @return this
      */
-    public Vector store(FloatBuffer buf) {
+    public Vector2f store(FloatBuffer buf) {
         buf.put(x);
         buf.put(y);
         return this;
@@ -226,29 +211,35 @@ public class Vector2f extends Vector implements Serializable, ReadableVector2f, 
      * @param buf The buffer to load it from, at the current position
      * @return this
      */
-    public Vector load(FloatBuffer buf) {
+    public Vector2f load(FloatBuffer buf) {
         x = buf.get();
         y = buf.get();
         return this;
     }
 
     /* (non-Javadoc)
-     * @see org.lwjgl.vector.Vector#scale(float)
+     * @see org.lwjgl.vector.Vector#scale(float,T)
      */
-    public Vector scale(float scale) {
+    public Vector2f scale(float scale, Vector2f dest) {
+        dest.x = x * scale;
+        dest.y = y * scale;
+        return dest;
+    }
 
-        x *= scale;
-        y *= scale;
-
-        return this;
+    /* (non-Javadoc)
+     * @see org.lwjgl.vector.Vector#divide(float,T)
+     */
+    public Vector2f divide(float scale, Vector2f dest) {
+        dest.x = x / scale;
+        dest.y = y / scale;
+        return dest;
     }
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     public String toString() {
-        StringBuilder sb = new StringBuilder(64);
-
+        var sb = new StringBuilder(64);
         sb.append("Vector2f[");
         sb.append(x);
         sb.append(", ");
@@ -260,14 +251,14 @@ public class Vector2f extends Vector implements Serializable, ReadableVector2f, 
     /**
      * @return x
      */
-    public final float getX() {
+    public float getX() {
         return x;
     }
 
     /**
      * @return y
      */
-    public final float getY() {
+    public float getY() {
         return y;
     }
 
@@ -275,7 +266,7 @@ public class Vector2f extends Vector implements Serializable, ReadableVector2f, 
      * Set X
      * @param x
      */
-    public final void setX(float x) {
+    public void setX(float x) {
         this.x = x;
     }
 
@@ -283,19 +274,21 @@ public class Vector2f extends Vector implements Serializable, ReadableVector2f, 
      * Set Y
      * @param y
      */
-    public final void setY(float y) {
+    public void setY(float y) {
         this.y = y;
     }
 
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
-        Vector2f other = (Vector2f)obj;
-
-        if (x == other.x && y == other.y) return true;
-
+        if (obj instanceof Vector2f other) {
+            return x == other.x && y == other.y;
+        }
         return false;
     }
 
+    public @Override int hashCode() {
+        int result = 1430287;
+        result = (7302013 * result) ^ Float.hashCode(x);
+        result = (7302013 * result) ^ Float.hashCode(y);
+        return result;
+    }
 }

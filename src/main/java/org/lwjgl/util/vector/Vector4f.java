@@ -44,7 +44,7 @@ import java.nio.FloatBuffer;
  * $Id$
  */
 
-public class Vector4f extends Vector implements Serializable, ReadableVector4f, WritableVector4f {
+public final class Vector4f extends Vector<Vector4f> implements Serializable, ReadableVector4f, WritableVector4f {
 
     private static final long serialVersionUID = 1L;
 
@@ -69,6 +69,11 @@ public class Vector4f extends Vector implements Serializable, ReadableVector4f, 
      */
     public Vector4f(float x, float y, float z, float w) {
         set(x, y, z, w);
+    }
+
+    @Override
+    protected Vector4f create() {
+        return new Vector4f();
     }
 
     /* (non-Javadoc)
@@ -171,7 +176,7 @@ public class Vector4f extends Vector implements Serializable, ReadableVector4f, 
      * Negate a vector
      * @return this
      */
-    public Vector negate() {
+    public Vector4f negate() {
         x = -x;
         y = -y;
         z = -z;
@@ -240,7 +245,7 @@ public class Vector4f extends Vector implements Serializable, ReadableVector4f, 
     /* (non-Javadoc)
      * @see org.lwjgl.vector.Vector#load(FloatBuffer)
      */
-    public Vector load(FloatBuffer buf) {
+    public Vector4f load(FloatBuffer buf) {
         x = buf.get();
         y = buf.get();
         z = buf.get();
@@ -251,42 +256,61 @@ public class Vector4f extends Vector implements Serializable, ReadableVector4f, 
     /* (non-Javadoc)
      * @see org.lwjgl.vector.Vector#scale(float)
      */
-    public Vector scale(float scale) {
-        x *= scale;
-        y *= scale;
-        z *= scale;
-        w *= scale;
+    public Vector4f scale(float scale, Vector4f dest) {
+        dest.x = x * scale;
+        dest.y = y * scale;
+        dest.z = z * scale;
+        dest.w = w * scale;
+        return this;
+    }
+
+    /* (non-Javadoc)
+     * @see org.lwjgl.vector.Vector#divide(float)
+     */
+    public Vector4f divide(float scale, Vector4f dest) {
+        dest.x = x / scale;
+        dest.y = y / scale;
+        dest.z = z / scale;
+        dest.w = w / scale;
         return this;
     }
 
     /* (non-Javadoc)
      * @see org.lwjgl.vector.Vector#store(FloatBuffer)
      */
-    public Vector store(FloatBuffer buf) {
-
+    public Vector4f store(FloatBuffer buf) {
         buf.put(x);
         buf.put(y);
         buf.put(z);
         buf.put(w);
-
         return this;
     }
 
     public String toString() {
-        return "Vector4f: " + x + " " + y + " " + z + " " + w;
+        var sb = new StringBuilder(64);
+        sb.append("Vector4f[");
+        sb.append(x);
+        sb.append(", ");
+        sb.append(y);
+        sb.append(", ");
+        sb.append(z);
+        sb.append(", ");
+        sb.append(w);
+        sb.append(']');
+        return sb.toString();
     }
 
     /**
      * @return x
      */
-    public final float getX() {
+    public float getX() {
         return x;
     }
 
     /**
      * @return y
      */
-    public final float getY() {
+    public float getY() {
         return y;
     }
 
@@ -294,7 +318,7 @@ public class Vector4f extends Vector implements Serializable, ReadableVector4f, 
      * Set X
      * @param x
      */
-    public final void setX(float x) {
+    public void setX(float x) {
         this.x = x;
     }
 
@@ -302,7 +326,7 @@ public class Vector4f extends Vector implements Serializable, ReadableVector4f, 
      * Set Y
      * @param y
      */
-    public final void setY(float y) {
+    public void setY(float y) {
         this.y = y;
     }
 
@@ -338,13 +362,18 @@ public class Vector4f extends Vector implements Serializable, ReadableVector4f, 
     }
 
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
-        Vector4f other = (Vector4f)obj;
-
-        if (x == other.x && y == other.y && z == other.z && w == other.w) return true;
-
+        if (obj instanceof Vector4f other) {
+            return x == other.x && y == other.y && z == other.z && w == other.w;
+        }
         return false;
+    }
+
+    public @Override int hashCode() {
+        int result = 1430287;
+        result = (7302013 * result) ^ Float.hashCode(x);
+        result = (7302013 * result) ^ Float.hashCode(y);
+        result = (7302013 * result) ^ Float.hashCode(z);
+        result = (7302013 * result) ^ Float.hashCode(w);
+        return result;
     }
 }

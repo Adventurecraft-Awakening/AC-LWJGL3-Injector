@@ -41,7 +41,7 @@ import static org.lwjgl.util.FastMath.*;
  *
  * @author foo
  */
-public class Matrix4f extends Matrix implements Serializable {
+public final class Matrix4f extends Matrix<Matrix4f> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     public float m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33;
@@ -68,7 +68,7 @@ public class Matrix4f extends Matrix implements Serializable {
      * Returns a string representation of this matrix
      */
     public String toString() {
-        StringBuilder buf = new StringBuilder();
+        var buf = new StringBuilder();
         buf.append(m00).append(' ').append(m10).append(' ').append(m20).append(' ').append(m30).append('\n');
         buf.append(m01).append(' ').append(m11).append(' ').append(m21).append(' ').append(m31).append('\n');
         buf.append(m02).append(' ').append(m12).append(' ').append(m22).append(' ').append(m32).append('\n');
@@ -81,7 +81,7 @@ public class Matrix4f extends Matrix implements Serializable {
      *
      * @return this
      */
-    public Matrix setIdentity() {
+    public Matrix4f setIdentity() {
         return setIdentity(this);
     }
 
@@ -108,7 +108,6 @@ public class Matrix4f extends Matrix implements Serializable {
         m.m31 = 0.0f;
         m.m32 = 0.0f;
         m.m33 = 1.0f;
-
         return m;
     }
 
@@ -117,7 +116,7 @@ public class Matrix4f extends Matrix implements Serializable {
      *
      * @return this
      */
-    public Matrix setZero() {
+    public Matrix4f setZero() {
         return setZero(this);
     }
 
@@ -144,7 +143,6 @@ public class Matrix4f extends Matrix implements Serializable {
         m.m31 = 0.0f;
         m.m32 = 0.0f;
         m.m33 = 0.0f;
-
         return m;
     }
 
@@ -184,7 +182,6 @@ public class Matrix4f extends Matrix implements Serializable {
         dest.m31 = src.m31;
         dest.m32 = src.m32;
         dest.m33 = src.m33;
-
         return dest;
     }
 
@@ -196,7 +193,6 @@ public class Matrix4f extends Matrix implements Serializable {
      * @return this
      */
     public Matrix4f load(FloatBuffer buf) {
-
         m00 = buf.get();
         m01 = buf.get();
         m02 = buf.get();
@@ -213,7 +209,6 @@ public class Matrix4f extends Matrix implements Serializable {
         m31 = buf.get();
         m32 = buf.get();
         m33 = buf.get();
-
         return this;
     }
 
@@ -224,8 +219,7 @@ public class Matrix4f extends Matrix implements Serializable {
      * @param buf A float buffer to read from
      * @return this
      */
-    public Matrix loadTranspose(FloatBuffer buf) {
-
+    public Matrix4f loadTranspose(FloatBuffer buf) {
         m00 = buf.get();
         m10 = buf.get();
         m20 = buf.get();
@@ -242,7 +236,6 @@ public class Matrix4f extends Matrix implements Serializable {
         m13 = buf.get();
         m23 = buf.get();
         m33 = buf.get();
-
         return this;
     }
 
@@ -252,7 +245,7 @@ public class Matrix4f extends Matrix implements Serializable {
      *
      * @param buf The buffer to store this matrix in
      */
-    public Matrix store(FloatBuffer buf) {
+    public Matrix4f store(FloatBuffer buf) {
         buf.put(m00);
         buf.put(m01);
         buf.put(m02);
@@ -278,7 +271,7 @@ public class Matrix4f extends Matrix implements Serializable {
      *
      * @param buf The buffer to store this matrix in
      */
-    public Matrix storeTranspose(FloatBuffer buf) {
+    public Matrix4f storeTranspose(FloatBuffer buf) {
         buf.put(m00);
         buf.put(m10);
         buf.put(m20);
@@ -304,7 +297,7 @@ public class Matrix4f extends Matrix implements Serializable {
      *
      * @param buf The buffer to store this matrix in
      */
-    public Matrix store3f(FloatBuffer buf) {
+    public Matrix4f store3f(FloatBuffer buf) {
         buf.put(m00);
         buf.put(m01);
         buf.put(m02);
@@ -345,7 +338,6 @@ public class Matrix4f extends Matrix implements Serializable {
         dest.m31 = left.m31 + right.m31;
         dest.m32 = left.m32 + right.m32;
         dest.m33 = left.m33 + right.m33;
-
         return dest;
     }
 
@@ -377,7 +369,6 @@ public class Matrix4f extends Matrix implements Serializable {
         dest.m31 = left.m31 - right.m31;
         dest.m32 = left.m32 - right.m32;
         dest.m33 = left.m33 - right.m33;
-
         return dest;
     }
 
@@ -436,7 +427,6 @@ public class Matrix4f extends Matrix implements Serializable {
         dest.m31 = m31;
         dest.m32 = m32;
         dest.m33 = m33;
-
         return dest;
     }
 
@@ -505,7 +495,7 @@ public class Matrix4f extends Matrix implements Serializable {
      *
      * @return this
      */
-    public Matrix transpose() {
+    public Matrix4f transpose() {
         return transpose(this);
     }
 
@@ -915,7 +905,6 @@ public class Matrix4f extends Matrix implements Serializable {
         dest.m31 = m31;
         dest.m32 = m32;
         dest.m33 = m33;
-
         return dest;
     }
 
@@ -961,7 +950,7 @@ public class Matrix4f extends Matrix implements Serializable {
      *
      * @return this if successful, null otherwise
      */
-    public Matrix invert() {
+    public Matrix4f invert() {
         return invert(this, this);
     }
 
@@ -1033,7 +1022,7 @@ public class Matrix4f extends Matrix implements Serializable {
      *
      * @return this
      */
-    public Matrix negate() {
+    public Matrix4f negate() {
         return negate(this);
     }
 
@@ -1074,7 +1063,6 @@ public class Matrix4f extends Matrix implements Serializable {
         dest.m31 = -src.m31;
         dest.m32 = -src.m32;
         dest.m33 = -src.m33;
-
         return dest;
     }
 }

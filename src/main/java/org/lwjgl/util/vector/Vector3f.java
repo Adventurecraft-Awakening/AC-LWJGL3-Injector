@@ -31,6 +31,8 @@
  */
 package org.lwjgl.util.vector;
 
+import org.lwjgl.util.FastMath;
+
 import java.io.Serializable;
 import java.nio.FloatBuffer;
 
@@ -43,7 +45,7 @@ import java.nio.FloatBuffer;
  * $Id$
  */
 
-public class Vector3f extends Vector implements Serializable, ReadableVector3f, WritableVector3f {
+public final class Vector3f extends Vector<Vector3f> implements Serializable, ReadableVector3f, WritableVector3f {
 
     private static final long serialVersionUID = 1L;
 
@@ -68,6 +70,11 @@ public class Vector3f extends Vector implements Serializable, ReadableVector3f, 
      */
     public Vector3f(float x, float y, float z) {
         set(x, y, z);
+    }
+
+    @Override
+    protected Vector3f create() {
+        return new Vector3f();
     }
 
     /* (non-Javadoc)
@@ -129,11 +136,9 @@ public class Vector3f extends Vector implements Serializable, ReadableVector3f, 
      */
     public static Vector3f add(Vector3f left, Vector3f right, Vector3f dest) {
         if (dest == null)
-            return new Vector3f(left.x + right.x, left.y + right.y, left.z + right.z);
-        else {
-            dest.set(left.x + right.x, left.y + right.y, left.z + right.z);
-            return dest;
-        }
+            return new Vector3f();
+        dest.set(left.x + right.x, left.y + right.y, left.z + right.z);
+        return dest;
     }
 
     /**
@@ -146,11 +151,9 @@ public class Vector3f extends Vector implements Serializable, ReadableVector3f, 
      */
     public static Vector3f sub(Vector3f left, Vector3f right, Vector3f dest) {
         if (dest == null)
-            return new Vector3f(left.x - right.x, left.y - right.y, left.z - right.z);
-        else {
-            dest.set(left.x - right.x, left.y - right.y, left.z - right.z);
-            return dest;
-        }
+            return new Vector3f();
+        dest.set(left.x - right.x, left.y - right.y, left.z - right.z);
+        return dest;
     }
 
     /**
@@ -162,30 +165,27 @@ public class Vector3f extends Vector implements Serializable, ReadableVector3f, 
      * @return left cross right
      */
     public static Vector3f cross(
-            Vector3f left,
-            Vector3f right,
-            Vector3f dest)
+        Vector3f left,
+        Vector3f right,
+        Vector3f dest)
     {
-
         if (dest == null)
             dest = new Vector3f();
 
         dest.set(
-                left.y * right.z - left.z * right.y,
-                right.x * left.z - right.z * left.x,
-                left.x * right.y - left.y * right.x
+            left.y * right.z - left.z * right.y,
+            right.x * left.z - right.z * left.x,
+            left.x * right.y - left.y * right.x
         );
-
         return dest;
     }
-
 
 
     /**
      * Negate a vector
      * @return this
      */
-    public Vector negate() {
+    public Vector3f negate() {
         x = -x;
         y = -y;
         z = -z;
@@ -216,11 +216,14 @@ public class Vector3f extends Vector implements Serializable, ReadableVector3f, 
         float l = length();
 
         if (dest == null)
-            dest = new Vector3f(x / l, y / l, z / l);
-        else
-            dest.set(x / l, y / l, z / l);
+            dest = new Vector3f();
 
+        dest.set(x / l, y / l, z / l);
         return dest;
+    }
+
+    public Vector3f normalise() {
+        return normalise(this);
     }
 
     /**
@@ -242,17 +245,14 @@ public class Vector3f extends Vector implements Serializable, ReadableVector3f, 
      */
     public static float angle(Vector3f a, Vector3f b) {
         float dls = dot(a, b) / (a.length() * b.length());
-        if (dls < -1f)
-            dls = -1f;
-        else if (dls > 1.0f)
-            dls = 1.0f;
+        dls = FastMath.clamp(dls, -1f, 1.0f);
         return (float)Math.acos(dls);
     }
 
     /* (non-Javadoc)
      * @see org.lwjgl.vector.Vector#load(FloatBuffer)
      */
-    public Vector load(FloatBuffer buf) {
+    public Vector3f load(FloatBuffer buf) {
         x = buf.get();
         y = buf.get();
         z = buf.get();
@@ -260,27 +260,32 @@ public class Vector3f extends Vector implements Serializable, ReadableVector3f, 
     }
 
     /* (non-Javadoc)
-     * @see org.lwjgl.vector.Vector#scale(float)
+     * @see org.lwjgl.vector.Vector#scale(float,T)
      */
-    public Vector scale(float scale) {
+    public Vector3f scale(float scale, Vector3f dest) {
+        dest.x = x * scale;
+        dest.y = y * scale;
+        dest.z = z * scale;
+        return dest;
+    }
 
-        x *= scale;
-        y *= scale;
-        z *= scale;
-
-        return this;
-
+    /* (non-Javadoc)
+     * @see org.lwjgl.vector.Vector#divide(float,T)
+     */
+    public Vector3f divide(float scale, Vector3f dest) {
+        dest.x = x / scale;
+        dest.y = y / scale;
+        dest.z = z / scale;
+        return dest;
     }
 
     /* (non-Javadoc)
      * @see org.lwjgl.vector.Vector#store(FloatBuffer)
      */
-    public Vector store(FloatBuffer buf) {
-
+    public Vector3f store(FloatBuffer buf) {
         buf.put(x);
         buf.put(y);
         buf.put(z);
-
         return this;
     }
 
@@ -288,8 +293,7 @@ public class Vector3f extends Vector implements Serializable, ReadableVector3f, 
      * @see java.lang.Object#toString()
      */
     public String toString() {
-        StringBuilder sb = new StringBuilder(64);
-
+        var sb = new StringBuilder(64);
         sb.append("Vector3f[");
         sb.append(x);
         sb.append(", ");
@@ -303,14 +307,14 @@ public class Vector3f extends Vector implements Serializable, ReadableVector3f, 
     /**
      * @return x
      */
-    public final float getX() {
+    public float getX() {
         return x;
     }
 
     /**
      * @return y
      */
-    public final float getY() {
+    public float getY() {
         return y;
     }
 
@@ -318,7 +322,7 @@ public class Vector3f extends Vector implements Serializable, ReadableVector3f, 
      * Set X
      * @param x
      */
-    public final void setX(float x) {
+    public void setX(float x) {
         this.x = x;
     }
 
@@ -326,7 +330,7 @@ public class Vector3f extends Vector implements Serializable, ReadableVector3f, 
      * Set Y
      * @param y
      */
-    public final void setY(float y) {
+    public void setY(float y) {
         this.y = y;
     }
 
@@ -346,13 +350,17 @@ public class Vector3f extends Vector implements Serializable, ReadableVector3f, 
     }
 
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
-        Vector3f other = (Vector3f)obj;
-
-        if (x == other.x && y == other.y && z == other.z) return true;
-
+        if(obj instanceof Vector3f other) {
+            return x == other.x && y == other.y && z == other.z;
+        }
         return false;
+    }
+
+    public @Override int hashCode() {
+        int result = 1430287;
+        result = (7302013 * result) ^ Float.hashCode(x);
+        result = (7302013 * result) ^ Float.hashCode(y);
+        result = (7302013 * result) ^ Float.hashCode(z);
+        return result;
     }
 }

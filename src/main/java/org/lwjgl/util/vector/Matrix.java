@@ -43,7 +43,7 @@ import java.nio.FloatBuffer;
  * @version $Revision$
  * $Id$
  */
-public abstract class Matrix implements Serializable {
+public abstract sealed class Matrix<T extends Matrix<T>> implements Serializable permits Matrix2f, Matrix3f, Matrix4f {
 
     /**
      * Constructor for Matrix.
@@ -56,14 +56,14 @@ public abstract class Matrix implements Serializable {
      * Set this matrix to be the identity matrix.
      * @return this
      */
-    public abstract Matrix setIdentity();
+    public abstract T setIdentity();
 
 
     /**
      * Invert this matrix
      * @return this
      */
-    public abstract Matrix invert();
+    public abstract T invert();
 
 
     /**
@@ -73,7 +73,7 @@ public abstract class Matrix implements Serializable {
      * @param buf A float buffer to read from
      * @return this
      */
-    public abstract Matrix load(FloatBuffer buf);
+    public abstract T load(FloatBuffer buf);
 
 
     /**
@@ -83,14 +83,14 @@ public abstract class Matrix implements Serializable {
      * @param buf A float buffer to read from
      * @return this
      */
-    public abstract Matrix loadTranspose(FloatBuffer buf);
+    public abstract T loadTranspose(FloatBuffer buf);
 
 
     /**
      * Negate this matrix
      * @return this
      */
-    public abstract Matrix negate();
+    public abstract T negate();
 
 
     /**
@@ -99,7 +99,7 @@ public abstract class Matrix implements Serializable {
      * @param buf The buffer to store this matrix in
      * @return this
      */
-    public abstract Matrix store(FloatBuffer buf);
+    public abstract T store(FloatBuffer buf);
 
 
     /**
@@ -108,27 +108,25 @@ public abstract class Matrix implements Serializable {
      * @param buf The buffer to store this matrix in
      * @return this
      */
-    public abstract Matrix storeTranspose(FloatBuffer buf);
+    public abstract T storeTranspose(FloatBuffer buf);
 
 
     /**
      * Transpose this matrix
      * @return this
      */
-    public abstract Matrix transpose();
+    public abstract T transpose();
 
 
     /**
      * Set this matrix to 0.
      * @return this
      */
-    public abstract Matrix setZero();
+    public abstract T setZero();
 
 
     /**
      * @return the determinant of the matrix
      */
     public abstract float determinant();
-
-
 }
