@@ -42,6 +42,7 @@ import static org.lwjgl.util.FastMath.*;
  * @author foo
  */
 public final class Matrix4f extends Matrix<Matrix4f> implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     public float m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33;
@@ -446,15 +447,10 @@ public final class Matrix4f extends Matrix<Matrix4f> implements Serializable {
     }
 
     public static Vector4f transform(Matrix4f left, float x, float y, float z, float w, Vector4f dest) {
-        float dx = mulAdd(left.m00, x, mulAdd(left.m10, y, mulAdd(left.m20, z, left.m30 * w)));
-        float dy = mulAdd(left.m01, x, mulAdd(left.m11, y, mulAdd(left.m21, z, left.m31 * w)));
-        float dz = mulAdd(left.m02, x, mulAdd(left.m12, y, mulAdd(left.m22, z, left.m32 * w)));
-        float dw = mulAdd(left.m03, x, mulAdd(left.m13, y, mulAdd(left.m23, z, left.m33 * w)));
-
-        dest.x = dx;
-        dest.y = dy;
-        dest.z = dz;
-        dest.w = dw;
+        dest.x = mulAdd(left.m00, x, mulAdd(left.m10, y, mulAdd(left.m20, z, left.m30 * w)));
+        dest.y = mulAdd(left.m01, x, mulAdd(left.m11, y, mulAdd(left.m21, z, left.m31 * w)));
+        dest.z = mulAdd(left.m02, x, mulAdd(left.m12, y, mulAdd(left.m22, z, left.m32 * w)));
+        dest.w = mulAdd(left.m03, x, mulAdd(left.m13, y, mulAdd(left.m23, z, left.m33 * w)));
         return dest;
     }
 
@@ -465,13 +461,9 @@ public final class Matrix4f extends Matrix<Matrix4f> implements Serializable {
     }
 
     public static Vector3f transform(Matrix4f left, float x, float y, float z, Vector3f dest) {
-        float dx = mulAdd(left.m00, x, mulAdd(left.m10, y, mulAdd(left.m20, z, left.m30)));
-        float dy = mulAdd(left.m01, x, mulAdd(left.m11, y, mulAdd(left.m21, z, left.m31)));
-        float dz = mulAdd(left.m02, x, mulAdd(left.m12, y, mulAdd(left.m22, z, left.m32)));
-
-        dest.x = dx;
-        dest.y = dy;
-        dest.z = dz;
+        dest.x = mulAdd(left.m00, x, mulAdd(left.m10, y, mulAdd(left.m20, z, left.m30)));
+        dest.y = mulAdd(left.m01, x, mulAdd(left.m11, y, mulAdd(left.m21, z, left.m31)));
+        dest.z = mulAdd(left.m02, x, mulAdd(left.m12, y, mulAdd(left.m22, z, left.m32)));
         return dest;
     }
 

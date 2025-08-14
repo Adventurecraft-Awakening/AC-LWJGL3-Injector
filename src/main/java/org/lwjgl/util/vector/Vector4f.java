@@ -147,11 +147,9 @@ public final class Vector4f extends Vector<Vector4f> implements Serializable, Re
      */
     public static Vector4f add(Vector4f left, Vector4f right, Vector4f dest) {
         if (dest == null)
-            return new Vector4f(left.x + right.x, left.y + right.y, left.z + right.z, left.w + right.w);
-        else {
-            dest.set(left.x + right.x, left.y + right.y, left.z + right.z, left.w + right.w);
-            return dest;
-        }
+            dest = new Vector4f();
+        dest.set(left.x + right.x, left.y + right.y, left.z + right.z, left.w + right.w);
+        return dest;
     }
 
     /**
@@ -164,11 +162,9 @@ public final class Vector4f extends Vector<Vector4f> implements Serializable, Re
      */
     public static Vector4f sub(Vector4f left, Vector4f right, Vector4f dest) {
         if (dest == null)
-            return new Vector4f(left.x - right.x, left.y - right.y, left.z - right.z, left.w - right.w);
-        else {
-            dest.set(left.x - right.x, left.y - right.y, left.z - right.z, left.w - right.w);
-            return dest;
-        }
+            dest = new Vector4f();
+        dest.set(left.x - right.x, left.y - right.y, left.z - right.z, left.w - right.w);
+        return dest;
     }
 
 

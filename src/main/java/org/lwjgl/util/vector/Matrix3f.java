@@ -34,6 +34,8 @@ package org.lwjgl.util.vector;
 import java.io.Serializable;
 import java.nio.FloatBuffer;
 
+import static org.lwjgl.util.FastMath.mulAdd;
+
 /**
  *
  * Holds a 3x3 matrix.
@@ -93,7 +95,37 @@ public final class Matrix3f extends Matrix<Matrix3f> implements Serializable {
         dest.m02 = src.m02;
         dest.m12 = src.m12;
         dest.m22 = src.m22;
+        return dest;
+    }
 
+    /**
+     * Load from another matrix
+     * @param src The source matrix
+     * @return this
+     */
+    public Matrix3f load(Matrix4f src) {
+        return load(src, this);
+    }
+
+    /**
+     * Copy source matrix to destination matrix
+     * @param src The source matrix
+     * @param dest The destination matrix, or null of a new matrix is to be created
+     * @return The copied matrix
+     */
+    public static Matrix3f load(Matrix4f src, Matrix3f dest) {
+        if (dest == null)
+            dest = new Matrix3f();
+
+        dest.m00 = src.m00;
+        dest.m10 = src.m10;
+        dest.m20 = src.m20;
+        dest.m01 = src.m01;
+        dest.m11 = src.m11;
+        dest.m21 = src.m21;
+        dest.m02 = src.m02;
+        dest.m12 = src.m12;
+        dest.m22 = src.m22;
         return dest;
     }
 
@@ -272,14 +304,13 @@ public final class Matrix3f extends Matrix<Matrix3f> implements Serializable {
     public static Vector3f transform(Matrix3f left, Vector3f right, Vector3f dest) {
         if (dest == null)
             dest = new Vector3f();
+        return transform(left, right.x, right.y, right.z, dest);
+    }
 
-        float x = left.m00 * right.x + left.m10 * right.y + left.m20 * right.z;
-        float y = left.m01 * right.x + left.m11 * right.y + left.m21 * right.z;
-        float z = left.m02 * right.x + left.m12 * right.y + left.m22 * right.z;
-
-        dest.x = x;
-        dest.y = y;
-        dest.z = z;
+    public static Vector3f transform(Matrix3f left, float x, float y, float z, Vector3f dest) {
+        dest.x = mulAdd(left.m00, x, mulAdd(left.m10, y, left.m20 * z));
+        dest.y = mulAdd(left.m01, x, mulAdd(left.m11, y, left.m21 * z));
+        dest.z = mulAdd(left.m02, x, mulAdd(left.m12, y, left.m22 * z));
         return dest;
     }
 

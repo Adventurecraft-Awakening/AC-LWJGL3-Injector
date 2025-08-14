@@ -175,7 +175,7 @@ public final class Vector2f extends Vector<Vector2f> implements Serializable, Re
      */
     public static Vector2f add(Vector2f left, Vector2f right, Vector2f dest) {
         if (dest == null)
-            return new Vector2f();
+            dest = new Vector2f();
         dest.set(left.x + right.x, left.y + right.y);
         return dest;
     }
@@ -190,7 +190,7 @@ public final class Vector2f extends Vector<Vector2f> implements Serializable, Re
      */
     public static Vector2f sub(Vector2f left, Vector2f right, Vector2f dest) {
         if (dest == null)
-            return new Vector2f();
+            dest = new Vector2f();
         dest.set(left.x - right.x, left.y - right.y);
         return dest;
     }

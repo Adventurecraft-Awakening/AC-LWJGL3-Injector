@@ -126,6 +126,22 @@ public final class Vector3f extends Vector<Vector3f> implements Serializable, Re
         return this;
     }
 
+    public static Vector3f rotateX(float angle, float x, float y, float z, Vector3f dest) {
+        float cos = (float) Math.cos(angle);
+        float sin = (float) Math.sin(angle);
+        dest.x = x;
+        dest.y = y * cos - z * sin;
+        dest.z = y * sin + z * cos;
+        return dest;
+    }
+
+    public static Vector3f rotateX(float angle, Vector3f src, Vector3f dest) {
+        if (dest == null) {
+            dest = new Vector3f();
+        }
+        return rotateX(angle, src.x, src.y, src.z, dest);
+    }
+
     /**
      * Add a vector to another vector and place the result in a destination
      * vector.
@@ -136,7 +152,7 @@ public final class Vector3f extends Vector<Vector3f> implements Serializable, Re
      */
     public static Vector3f add(Vector3f left, Vector3f right, Vector3f dest) {
         if (dest == null)
-            return new Vector3f();
+            dest = new Vector3f();
         dest.set(left.x + right.x, left.y + right.y, left.z + right.z);
         return dest;
     }
@@ -151,7 +167,7 @@ public final class Vector3f extends Vector<Vector3f> implements Serializable, Re
      */
     public static Vector3f sub(Vector3f left, Vector3f right, Vector3f dest) {
         if (dest == null)
-            return new Vector3f();
+            dest = new Vector3f();
         dest.set(left.x - right.x, left.y - right.y, left.z - right.z);
         return dest;
     }
@@ -171,7 +187,6 @@ public final class Vector3f extends Vector<Vector3f> implements Serializable, Re
     {
         if (dest == null)
             dest = new Vector3f();
-
         dest.set(
             left.y * right.z - left.z * right.y,
             right.x * left.z - right.z * left.x,
